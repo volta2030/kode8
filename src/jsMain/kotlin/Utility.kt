@@ -15,5 +15,15 @@ class Utility {
             return result.toString()
         }
 
+        fun String.trim(column : Int) : String{
+
+            var trimedString = ""
+
+            for (i : Int in indices step column){
+                trimedString = this.slice(i until i + column) + "/n"
+            }
+
+            return ""
+        }
     }
 }

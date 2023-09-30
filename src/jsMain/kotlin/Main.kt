@@ -1,4 +1,5 @@
 import Utility.Companion.toHex
+import Utility.Companion.trim
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
@@ -24,7 +25,7 @@ fun main() {
 
         Header({
             style {
-                position(Position.Relative)
+                position(Position.Absolute)
                 top(0.px)
                 left(0.px)
                 right(0.px)
@@ -54,7 +55,7 @@ fun main() {
                             if (arrayBuffer != null) {
                                 val byteArray = Int8Array(arrayBuffer).unsafeCast<ByteArray>()
                                 byteData = byteArray
-                                string = byteArray.toHex()
+                                string = byteArray.toHex().trim(16)
 
                             }
                         }
