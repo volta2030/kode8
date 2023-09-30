@@ -106,7 +106,7 @@ fun main() {
                 textAlign("center")
             }
         }) {
-            Text("Copyright © 2023 SnackLab. All Rights Reserved.")
+            Text("Copyright © 2023 SnackLab(volta2030). All Rights Reserved.")
         }
 
     }
