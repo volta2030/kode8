@@ -21,7 +21,7 @@ fun main() {
 
     renderComposable(rootElementId = "root") {
         Div({style { padding(25.px) }}){
-            Text("kode8 : The Awesome Byte Code Viewer -- SnackLab")
+            Text("kode8 : The Awesome Byte Code Viewer")
         }
         Div({ style { padding(25.px) } }) {
 
@@ -50,6 +50,22 @@ fun main() {
 
             Text(string)
         }
+
+        // Apply CSS for the footer
+        Footer({
+            style {
+                position(Position.Absolute)
+                bottom(0.px)
+                left(0.px)
+                right(0.px)
+                backgroundColor(Color.lightgray) // Add background color as needed
+                padding(10.px)
+                textAlign("center")
+            }
+        }) {
+            Text("Copyright © 2023 SnackLab. All Rights Reserved.")
+        }
+
     }
 }
 
