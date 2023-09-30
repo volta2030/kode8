@@ -1,3 +1,4 @@
+import Utility.Companion.toHex
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
@@ -80,19 +81,4 @@ fun main() {
         }
 
     }
-}
-
-fun ByteArray.toHex(): String {
-    val hexChars = "0123456789ABCDEF"
-    val result = StringBuilder(this.size * 2)
-
-    for (byte in this) {
-        val intValue = byte.toInt() and 0xFF
-        val firstDigit = hexChars[intValue ushr 4]
-        val secondDigit = hexChars[intValue and 0x0F]
-        result.append(firstDigit)
-        result.append(secondDigit)
-    }
-
-    return result.toString()
 }
