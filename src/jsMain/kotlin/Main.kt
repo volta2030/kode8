@@ -20,12 +20,26 @@ fun main() {
 
 
     renderComposable(rootElementId = "root") {
-        Div({style { padding(25.px) }}){
-            Text("kode8 : The Awesome Byte Code Viewer")
-        }
-        Div({ style { padding(25.px) } }) {
 
+        Header({
+            style {
+                position(Position.Relative)
+                top(0.px)
+                left(0.px)
+                right(0.px)
+                color(Color.white)
+                fontWeight(2)
+                backgroundColor(Color.rebeccapurple)
+                padding(10.px)
+                textAlign("center")
+            }}){
+                Text("kode8 - The Byte Code Viewer")
+            }
 
+        Div({ style {
+            position(Position.Absolute)
+            top(40.px)
+        } }) {
             val fileInput = Input(
                 type = InputType.File,
                 attrs = {
@@ -39,7 +53,7 @@ fun main() {
                             if (arrayBuffer != null) {
                                 val byteArray = Int8Array(arrayBuffer).unsafeCast<ByteArray>()
                                 byteData = byteArray
-                                string = byteArrayToHexString(byteArray)
+                                string = byteArray.toHex()
 
                             }
                         }
@@ -51,7 +65,6 @@ fun main() {
             Text(string)
         }
 
-        // Apply CSS for the footer
         Footer({
             style {
                 position(Position.Absolute)
@@ -69,11 +82,11 @@ fun main() {
     }
 }
 
-fun byteArrayToHexString(byteArray: ByteArray): String {
+fun ByteArray.toHex(): String {
     val hexChars = "0123456789ABCDEF"
-    val result = StringBuilder(byteArray.size * 2)
+    val result = StringBuilder(this.size * 2)
 
-    for (byte in byteArray) {
+    for (byte in this) {
         val intValue = byte.toInt() and 0xFF
         val firstDigit = hexChars[intValue ushr 4]
         val secondDigit = hexChars[intValue and 0x0F]
