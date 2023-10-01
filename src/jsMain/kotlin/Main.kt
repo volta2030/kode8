@@ -57,20 +57,15 @@ fun main() {
                             val arrayBuffer = event.target.asDynamic().result as? ArrayBuffer
                             if (arrayBuffer != null) {
                                 val byteArray = Int8Array(arrayBuffer).unsafeCast<ByteArray>()
-
-
-
                                 string = byteArray.toHex()
                                 rows = (byteArray.size -1) / cols + 1
 
                                 cellData = Array(rows) {Array(cols) {""}}
                                 for (i in 0 until rows) {
-
                                     for (j in 0 until cols) {
                                         val startIndex = i * cols * chunkSize + j * chunkSize
                                         val endIndex = startIndex + chunkSize
-                                        val chunk = string.substring(startIndex, endIndex)
-                                        cellData[i][j] = chunk
+                                        cellData[i][j] = string.substring(startIndex, endIndex)
                                     }
                                 }
                             }
