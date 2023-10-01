@@ -17,6 +17,8 @@ fun main() {
 
     val cols = 64
     val chunkSize = 2
+    val versionText = "Current v.1.1.0"
+    val copyRightText = "Copyright © 2023 SnackLab(volta2030). All Rights Reserved."
     var selectedFile: File? = null
     var string by mutableStateOf("")
     var rows by mutableStateOf(0)
@@ -47,7 +49,8 @@ fun main() {
                     justifyContent(JustifyContent.SpaceBetween)
                     textAlign("center")
                     padding(5.px)
-                }}){
+                }
+            }) {
 
                 Text("kode8 - The Byte Code Viewer")
 
@@ -65,8 +68,8 @@ fun main() {
                                     val byteArray = Int8Array(arrayBuffer).unsafeCast<ByteArray>()
                                     size = byteArray.size
                                     string = byteArray.toHex()
-                                    rows = (byteArray.size -1) / cols + 1
-                                    cellData = Array(rows) {Array(cols) {""}}
+                                    rows = (byteArray.size - 1) / cols + 1
+                                    cellData = Array(rows) { Array(cols) { "" } }
                                     for (i in 0 until rows) {
                                         for (j in 0 until cols) {
                                             val startIndex = i * cols * chunkSize + j * chunkSize
@@ -83,28 +86,31 @@ fun main() {
 
             }
 
-            Main({ style {
-                paddingLeft(5.px)
-                paddingTop(40.px)
-                paddingBottom(40.px)
-                paddingRight(5.px)
+            Main({
+                style {
+                    paddingLeft(5.px)
+                    paddingTop(40.px)
+                    paddingBottom(40.px)
+                    paddingRight(5.px)
 
-                display(DisplayStyle.Flex)
-                flexDirection(FlexDirection.Column)
-                justifyContent(JustifyContent.SpaceBetween)
+                    display(DisplayStyle.Flex)
+                    flexDirection(FlexDirection.Column)
+                    justifyContent(JustifyContent.SpaceBetween)
 
-            } }) {
+                }
+            }) {
                 Table({
                     style {
                         fontSize(15.px)
-                        border (1.px, LineStyle.Solid, Color.black)
+                        border(1.px, LineStyle.Solid, Color.black)
+
                     }
-                }){
+                }) {
                     TableHeader(cols)
                     TableRows(cols, rows, cellData)
                 }
 
-                Text("Copyright © 2023 SnackLab(volta2030). All Rights Reserved.")
+                Text("$versionText / $copyRightText")
             }
 
             Footer({
@@ -127,19 +133,20 @@ fun main() {
 }
 
 @Composable
-fun TableHeader(cols : Int){
-    repeat(cols){ i->
-        Th{
+fun TableHeader(cols: Int) {
+
+    repeat(cols) { i ->
+        Th {
             Text(i.toHex())
         }
     }
 }
 
 @Composable
-fun TableRows(cols : Int, numberOfRows : Int, cellData : Array<Array<String>>){
+fun TableRows(cols: Int, numberOfRows: Int, cellData: Array<Array<String>>) {
     repeat(numberOfRows) { i ->
-        Tr{
-            repeat(cols){j ->
+        Tr {
+            repeat(cols) { j ->
                 Td {
                     Text(cellData[i][j])
                 }
