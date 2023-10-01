@@ -1,7 +1,6 @@
 class Utility {
     companion object {
         fun Int.toHex() : String{
-            // 정수를 두 자리 16진수 문자열로 변환
             return this.toString(16).padStart(2, '0').uppercase()
         }
 
