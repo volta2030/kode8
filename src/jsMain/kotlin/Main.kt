@@ -17,7 +17,7 @@ fun main() {
 
     val cols = 64
     val chunkSize = 2
-    val versionText = "Current v.1.1.0"
+    val versionText = "Current v.1.2.0"
     val copyRightText = "Copyright © 2023 SnackLab(volta2030). All Rights Reserved."
     var selectedFile: File? = null
     var string by mutableStateOf("")
