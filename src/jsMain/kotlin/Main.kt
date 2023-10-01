@@ -99,11 +99,11 @@ fun main() {
 
                 }
             }) {
+
                 Table({
                     style {
                         fontSize(15.px)
                         border(1.px, LineStyle.Solid, Color.black)
-
                     }
                 }) {
                     TableHeader(cols)
@@ -134,9 +134,12 @@ fun main() {
 
 @Composable
 fun TableHeader(cols: Int) {
-
     repeat(cols) { i ->
-        Th {
+        Th({
+            style {
+                textAlign("center")
+            }
+        }) {
             Text(i.toHex())
         }
     }
@@ -144,10 +147,25 @@ fun TableHeader(cols: Int) {
 
 @Composable
 fun TableRows(cols: Int, numberOfRows: Int, cellData: Array<Array<String>>) {
+
+    val selectedCell = remember { mutableStateOf<Pair<Int, Int>?>(null) }
+
     repeat(numberOfRows) { i ->
         Tr {
             repeat(cols) { j ->
-                Td {
+
+                val isSelected = selectedCell.value == Pair(i, j)
+
+                Td({
+                    style {
+                        backgroundColor(if (isSelected) Color.rebeccapurple else Color.transparent)
+                        color(if (isSelected) Color.white else Color.black)
+                        textAlign("center")
+                    }
+                    onClick {
+                        selectedCell.value = Pair(i, j)
+                    }
+                }) {
                     Text(cellData[i][j])
                 }
             }
