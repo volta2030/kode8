@@ -2,19 +2,26 @@ import Utility.Companion.toHex
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import org.jetbrains.compose.web.css.Color
-import org.jetbrains.compose.web.css.backgroundColor
-import org.jetbrains.compose.web.css.color
-import org.jetbrains.compose.web.css.textAlign
+import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.Td
 import org.jetbrains.compose.web.dom.Text
 import org.jetbrains.compose.web.dom.Th
 import org.jetbrains.compose.web.dom.Tr
+import org.w3c.dom.HTMLFontElement
 
 class CustomComposeUI {
     companion object{
         @Composable
         fun TableHeader(cols: Int) {
+
+            Th({
+                style{
+                    textAlign("center")
+                }
+            }){
+                Text("┏")
+            }
+
             repeat(cols) { i ->
                 Th({
                     style {
@@ -34,8 +41,18 @@ class CustomComposeUI {
 
             val selectedCell = remember { mutableStateOf<Pair<Int, Int>?>(null) }
 
+
             repeat(numberOfRows) { i ->
                 Tr {
+
+                    Td({
+                        style {
+                            fontWeight("bold")
+                        }
+                    }){
+                        Text(i.toHex())
+                    }
+
                     repeat(cols) { j ->
 
                         val isSelected = selectedCell.value == Pair(i, j)
