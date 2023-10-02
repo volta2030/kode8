@@ -1,3 +1,4 @@
+import Utility.Companion.toASCII
 import Utility.Companion.toHex
 import androidx.compose.runtime.*
 import org.jetbrains.compose.web.attributes.InputType
