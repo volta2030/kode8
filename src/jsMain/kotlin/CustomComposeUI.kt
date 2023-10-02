@@ -27,7 +27,7 @@ class CustomComposeUI {
                         textAlign("center")
                     }
                 }) {
-                    Text(i.toHex())
+                    Text(i.toString())
                 }
             }
         }
@@ -46,10 +46,11 @@ class CustomComposeUI {
 
                     Td({
                         style {
+                            textAlign("center")
                             fontWeight("bold")
                         }
                     }){
-                        Text(i.toHex())
+                        Text(i.toString())
                     }
 
                     repeat(cols) { j ->
