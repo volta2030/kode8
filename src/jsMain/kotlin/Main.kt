@@ -54,8 +54,14 @@ fun main() {
                     padding(5.px)
                 }
             }) {
+                Div({
+                    style {
+                        fontWeight("bold")
+                    }
+                }) {
+                    Text("kode8 - Byte Code Viewer")
+                }
 
-                Text("kode8 - Byte Code Viewer")
 
                 Input(
                     type = InputType.File,
@@ -145,7 +151,7 @@ fun main() {
                 }
             }) {
                 Div {
-                    Text("${(coordinate[0] - 1) * cols  + coordinate[1]}th byte = [ row : ${coordinate[0]} | column : ${coordinate[1]} ]")
+                    Text(if (coordinate[0] * coordinate[1] == 0) "" else "${(coordinate[0] - 1) * cols  + coordinate[1]}th byte = [ row : ${coordinate[0]} | column : ${coordinate[1]} ]")
                 }
                 Div {
                     Text("Total $size Bytes")
