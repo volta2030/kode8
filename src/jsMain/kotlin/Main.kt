@@ -1,9 +1,7 @@
 import Utility.Companion.toHex
 import androidx.compose.runtime.*
 import org.jetbrains.compose.web.attributes.InputType
-import org.jetbrains.compose.web.attributes.size
 import org.jetbrains.compose.web.css.*
-import org.jetbrains.compose.web.css.keywords.CSSAutoKeyword
 import org.jetbrains.compose.web.dom.*
 import org.jetbrains.compose.web.renderComposable
 import org.khronos.webgl.ArrayBuffer
@@ -12,6 +10,7 @@ import org.w3c.dom.HTMLInputElement
 import org.w3c.files.File
 import org.w3c.files.FileReader
 import org.w3c.files.get
+
 
 fun main() {
 
@@ -26,7 +25,7 @@ fun main() {
     var cellData by mutableStateOf(
         Array(1) { Array(cols) { "" } }
     )
-
+    var coordinate by mutableStateOf(mutableListOf<Int>(0, 0))
 
     renderComposable(rootElementId = "root") {
         Div({
@@ -36,6 +35,7 @@ fun main() {
                 justifyContent(JustifyContent.SpaceBetween)
             }
         }) {
+
             Header({
                 style {
                     position(Position.Fixed)
@@ -107,7 +107,11 @@ fun main() {
                     }
                 }) {
                     TableHeader(cols)
-                    TableRows(cols, rows, cellData)
+                    TableRows(cols, rows, cellData,
+                        { newCoordinate ->
+                            coordinate = newCoordinate.toMutableList()
+                        }
+                    )
                 }
 
                 Text("$versionText / $copyRightText")
@@ -126,11 +130,21 @@ fun main() {
                     fontWeight(3)
                 }
             }) {
-                Text("$size Bytes")
+
+                    Text("Row : ${coordinate[0]} Column : ${coordinate[1]} ")
+                    Div({
+                        style {
+                            position(Position.Fixed)
+                            right(3.px)
+                        }
+                    }) {
+                        Text("$size Bytes")
+                    }
+
+                }
             }
         }
     }
-}
 
 @Composable
 fun TableHeader(cols: Int) {
@@ -146,7 +160,10 @@ fun TableHeader(cols: Int) {
 }
 
 @Composable
-fun TableRows(cols: Int, numberOfRows: Int, cellData: Array<Array<String>>) {
+fun TableRows(
+    cols: Int, numberOfRows: Int, cellData: Array<Array<String>>,
+    setCoordinate: (List<Int>) -> Unit
+) {
 
     val selectedCell = remember { mutableStateOf<Pair<Int, Int>?>(null) }
 
@@ -162,9 +179,12 @@ fun TableRows(cols: Int, numberOfRows: Int, cellData: Array<Array<String>>) {
                         color(if (isSelected) Color.white else Color.black)
                         textAlign("center")
                     }
+
                     onClick {
                         selectedCell.value = Pair(i, j)
+                        setCoordinate(listOf(i + 1, j + 1))
                     }
+
                 }) {
                     Text(cellData[i][j])
                 }
