@@ -53,7 +53,7 @@ fun main() {
                 }
             }) {
 
-                Text("kode8 - The Byte Code Viewer")
+                Text("kode8 - Byte Code Viewer")
 
                 Input(
                     type = InputType.File,
