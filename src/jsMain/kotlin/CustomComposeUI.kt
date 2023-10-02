@@ -7,7 +7,6 @@ import org.jetbrains.compose.web.dom.Td
 import org.jetbrains.compose.web.dom.Text
 import org.jetbrains.compose.web.dom.Th
 import org.jetbrains.compose.web.dom.Tr
-import org.w3c.dom.HTMLFontElement
 
 class CustomComposeUI {
     companion object{
@@ -65,8 +64,10 @@ class CustomComposeUI {
                             }
 
                             onClick {
-                                selectedCell.value = Pair(i, j)
-                                setCoordinate(listOf(i + 1, j + 1))
+                                if(cellData[i][j]!=""){
+                                    selectedCell.value = Pair(i, j)
+                                    setCoordinate(listOf(i + 1, j + 1))
+                                }
                             }
 
                         }) {
