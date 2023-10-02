@@ -14,12 +14,12 @@ import org.w3c.files.File
 import org.w3c.files.FileReader
 import org.w3c.files.get
 
-
+val version = "1.3.0"
 fun main() {
 
     val cols = 64
     val chunkSize = 2
-    val versionText = "Current v.1.2.0"
+    val versionText = "Current v.${version}"
     val copyRightText = "Copyright © 2023 SnackLab(volta2030). All Rights Reserved."
     var selectedFile: File? = null
     var string by mutableStateOf("")
