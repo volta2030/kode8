@@ -124,27 +124,27 @@ fun main() {
                     left(0.px)
                     right(0.px)
                     backgroundColor(Color.rebeccapurple) // Add background color as needed
-                    textAlign("right")
                     padding(5.px)
                     color(Color.white)
                     fontWeight(3)
+                    display(DisplayStyle.Flex)
+                    justifyContent(JustifyContent.SpaceBetween)
+                    flexDirection(FlexDirection.Row)
+                    alignItems(AlignItems.Center)
                 }
             }) {
 
-                    Text("Row : ${coordinate[0]} Column : ${coordinate[1]} ")
-                    Div({
-                        style {
-                            position(Position.Fixed)
-                            right(3.px)
-                        }
-                    }) {
+                    Div {
+                        Text("Row : ${coordinate[0]} Column : ${coordinate[1]} ")
+                    }
+                    Div {
                         Text("$size Bytes")
                     }
 
-                }
             }
         }
     }
+}
 
 @Composable
 fun TableHeader(cols: Int) {
