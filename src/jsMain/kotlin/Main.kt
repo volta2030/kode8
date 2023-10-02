@@ -113,8 +113,15 @@ fun main() {
                         }
                     )
                 }
+                Div({
+                    style {
+                        color(Color.gray)
+                        textAlign("center")
+                    }
+                }) {
+                    Text("$versionText / $copyRightText")
 
-                Text("$versionText / $copyRightText")
+                }
             }
 
             Footer({
@@ -133,12 +140,11 @@ fun main() {
                     alignItems(AlignItems.Center)
                 }
             }) {
-
                     Div {
-                        Text("Row : ${coordinate[0]} Column : ${coordinate[1]} ")
+                        Text("${coordinate[0] * coordinate[1]}th byte = [ row : ${coordinate[0]} | column : ${coordinate[1]} ]")
                     }
                     Div {
-                        Text("$size Bytes")
+                        Text("Total $size Bytes")
                     }
 
             }
