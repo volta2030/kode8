@@ -1,3 +1,5 @@
+import CustomComposeUI.Companion.TableHeader
+import CustomComposeUI.Companion.TableRows
 import Utility.Companion.toASCII
 import Utility.Companion.toHex
 import androidx.compose.runtime.*
@@ -57,6 +59,7 @@ fun main() {
 
                 Input(
                     type = InputType.File,
+
                     attrs = {
                         onChange { e ->
                             val target = e.target as? HTMLInputElement
@@ -141,60 +144,13 @@ fun main() {
                     alignItems(AlignItems.Center)
                 }
             }) {
-                    Div {
-                        Text("${coordinate[0] * coordinate[1]}th byte = [ row : ${coordinate[0]} | column : ${coordinate[1]} ]")
-                    }
-                    Div {
-                        Text("Total $size Bytes")
-                    }
-
-            }
-        }
-    }
-}
-
-@Composable
-fun TableHeader(cols: Int) {
-    repeat(cols) { i ->
-        Th({
-            style {
-                textAlign("center")
-            }
-        }) {
-            Text(i.toHex())
-        }
-    }
-}
-
-@Composable
-fun TableRows(
-    cols: Int, numberOfRows: Int, cellData: Array<Array<String>>,
-    setCoordinate: (List<Int>) -> Unit
-) {
-
-    val selectedCell = remember { mutableStateOf<Pair<Int, Int>?>(null) }
-
-    repeat(numberOfRows) { i ->
-        Tr {
-            repeat(cols) { j ->
-
-                val isSelected = selectedCell.value == Pair(i, j)
-
-                Td({
-                    style {
-                        backgroundColor(if (isSelected) Color.rebeccapurple else Color.transparent)
-                        color(if (isSelected) Color.white else Color.black)
-                        textAlign("center")
-                    }
-
-                    onClick {
-                        selectedCell.value = Pair(i, j)
-                        setCoordinate(listOf(i + 1, j + 1))
-                    }
-
-                }) {
-                    Text(cellData[i][j])
+                Div {
+                    Text("${(coordinate[0] - 1) * cols  + coordinate[1]}th byte = [ row : ${coordinate[0]} | column : ${coordinate[1]} ]")
                 }
+                Div {
+                    Text("Total $size Bytes")
+                }
+
             }
         }
     }
