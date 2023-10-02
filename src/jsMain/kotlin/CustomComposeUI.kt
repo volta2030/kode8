@@ -3,21 +3,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import org.jetbrains.compose.web.css.*
-import org.jetbrains.compose.web.dom.Td
-import org.jetbrains.compose.web.dom.Text
-import org.jetbrains.compose.web.dom.Th
-import org.jetbrains.compose.web.dom.Tr
+import org.jetbrains.compose.web.dom.*
 
 class CustomComposeUI {
-    companion object{
+    companion object {
         @Composable
         fun TableHeader(cols: Int) {
 
             Th({
-                style{
+                style {
                     textAlign("center")
                 }
-            }){
+            }) {
                 Text("┏")
             }
 
@@ -27,7 +24,7 @@ class CustomComposeUI {
                         textAlign("center")
                     }
                 }) {
-                    Text(i.toString())
+                    Text((i + 1).toString())
                 }
             }
         }
@@ -49,8 +46,8 @@ class CustomComposeUI {
                             textAlign("center")
                             fontWeight("bold")
                         }
-                    }){
-                        Text(i.toString())
+                    }) {
+                        Text((i + 1).toString())
                     }
 
                     repeat(cols) { j ->
@@ -62,10 +59,11 @@ class CustomComposeUI {
                                 backgroundColor(if (isSelected) Color.rebeccapurple else Color.transparent)
                                 color(if (isSelected) Color.white else Color.black)
                                 textAlign("center")
+
                             }
 
                             onClick {
-                                if(cellData[i][j]!=""){
+                                if (cellData[i][j] != "") {
                                     selectedCell.value = Pair(i, j)
                                     setCoordinate(listOf(i + 1, j + 1))
                                 }
