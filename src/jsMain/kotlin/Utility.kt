@@ -1,7 +1,7 @@
 class Utility {
     companion object {
+
         fun Int.toHex() : String{
-            // 정수를 두 자리 16진수 문자열로 변환
             return this.toString(16).padStart(2, '0').uppercase()
         }
 
@@ -20,15 +20,14 @@ class Utility {
             return result.toString()
         }
 
-        fun String.trim(column : Int) : String{
+        fun ByteArray.toASCII() : String {
+            val asciiChars = CharArray(this.size)
 
-            var trimedString = ""
-
-            for (i : Int in indices step column){
-                trimedString += this.slice(i until i + column) + "\n"
+            for (i in indices) {
+                asciiChars[i] = this[i].toInt().toChar()
             }
 
-            return trimedString
+            return asciiChars.concatToString()
         }
     }
 }

@@ -1,9 +1,10 @@
+import CustomComposeUI.Companion.TableHeader
+import CustomComposeUI.Companion.TableRows
+import Utility.Companion.toASCII
 import Utility.Companion.toHex
 import androidx.compose.runtime.*
 import org.jetbrains.compose.web.attributes.InputType
-import org.jetbrains.compose.web.attributes.size
 import org.jetbrains.compose.web.css.*
-import org.jetbrains.compose.web.css.keywords.CSSAutoKeyword
 import org.jetbrains.compose.web.dom.*
 import org.jetbrains.compose.web.renderComposable
 import org.khronos.webgl.ArrayBuffer
@@ -13,11 +14,12 @@ import org.w3c.files.File
 import org.w3c.files.FileReader
 import org.w3c.files.get
 
+val version = "1.3.0"
 fun main() {
 
     val cols = 64
     val chunkSize = 2
-    val versionText = "Current v.1.2.0"
+    val versionText = "Current v.${version}"
     val copyRightText = "Copyright © 2023 SnackLab(volta2030). All Rights Reserved."
     var selectedFile: File? = null
     var string by mutableStateOf("")
@@ -26,7 +28,7 @@ fun main() {
     var cellData by mutableStateOf(
         Array(1) { Array(cols) { "" } }
     )
-
+    var coordinate by mutableStateOf(mutableListOf<Int>(0, 0))
 
     renderComposable(rootElementId = "root") {
         Div({
@@ -36,6 +38,7 @@ fun main() {
                 justifyContent(JustifyContent.SpaceBetween)
             }
         }) {
+
             Header({
                 style {
                     position(Position.Fixed)
@@ -51,11 +54,18 @@ fun main() {
                     padding(5.px)
                 }
             }) {
+                Div({
+                    style {
+                        fontWeight("bold")
+                    }
+                }) {
+                    Text("kode8 - Byte Code Viewer")
+                }
 
-                Text("kode8 - The Byte Code Viewer")
 
                 Input(
                     type = InputType.File,
+
                     attrs = {
                         onChange { e ->
                             val target = e.target as? HTMLInputElement
@@ -99,18 +109,29 @@ fun main() {
 
                 }
             }) {
+
                 Table({
                     style {
                         fontSize(15.px)
                         border(1.px, LineStyle.Solid, Color.black)
-
                     }
                 }) {
                     TableHeader(cols)
-                    TableRows(cols, rows, cellData)
+                    TableRows(cols, rows, cellData,
+                        { newCoordinate ->
+                            coordinate = newCoordinate.toMutableList()
+                        }
+                    )
                 }
+                Div({
+                    style {
+                        color(Color.gray)
+                        textAlign("center")
+                    }
+                }) {
+                    Text("$versionText / $copyRightText")
 
-                Text("$versionText / $copyRightText")
+                }
             }
 
             Footer({
@@ -120,36 +141,22 @@ fun main() {
                     left(0.px)
                     right(0.px)
                     backgroundColor(Color.rebeccapurple) // Add background color as needed
-                    textAlign("right")
                     padding(5.px)
                     color(Color.white)
                     fontWeight(3)
+                    display(DisplayStyle.Flex)
+                    justifyContent(JustifyContent.SpaceBetween)
+                    flexDirection(FlexDirection.Row)
+                    alignItems(AlignItems.Center)
                 }
             }) {
-                Text("$size Bytes")
-            }
-        }
-    }
-}
-
-@Composable
-fun TableHeader(cols: Int) {
-
-    repeat(cols) { i ->
-        Th {
-            Text(i.toHex())
-        }
-    }
-}
-
-@Composable
-fun TableRows(cols: Int, numberOfRows: Int, cellData: Array<Array<String>>) {
-    repeat(numberOfRows) { i ->
-        Tr {
-            repeat(cols) { j ->
-                Td {
-                    Text(cellData[i][j])
+                Div {
+                    Text(if (coordinate[0] * coordinate[1] == 0) "" else "${(coordinate[0] - 1) * cols  + coordinate[1]}th byte = [ row : ${coordinate[0]} | column : ${coordinate[1]} ]")
                 }
+                Div {
+                    Text("Total $size Bytes")
+                }
+
             }
         }
     }
