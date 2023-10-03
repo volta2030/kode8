@@ -29,5 +29,11 @@ class Utility {
 
             return asciiChars.concatToString()
         }
+
+        fun ByteArray.toBinary(): String {
+            return this.joinToString("") { byte ->
+                byte.toString(2).padStart(8, '0')
+            }
+        }
     }
 }
