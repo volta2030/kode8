@@ -27,9 +27,7 @@ fun main() {
     var size by mutableStateOf(0)
 
     //radio buttons
-    var binarySelected by mutableStateOf(false)
-    var hexSelected by mutableStateOf(true)
-    var asciiSelected by mutableStateOf(false)
+    var displayMode by mutableStateOf(arrayOf(false, true, false))
 
     var cellData by mutableStateOf(
         Array(1) { Array(cols) { "" } }
@@ -166,11 +164,9 @@ fun main() {
                             Input(
                                 type = InputType.Radio,
                                 attrs = {
-                                 checked(binarySelected)
+                                 checked(displayMode[0])
                                  onClick {
-                                    binarySelected = true
-                                    hexSelected = false
-                                    asciiSelected = false
+                                    displayMode = arrayOf(true, false, false)
                                  }
                                 }
                             )
@@ -183,11 +179,9 @@ fun main() {
                             Input(
                                 type = InputType.Radio,
                                 attrs = {
-                                    checked(hexSelected)
+                                    checked(displayMode[1])
                                     onClick {
-                                        binarySelected = false
-                                        hexSelected = true
-                                        asciiSelected = false
+                                        displayMode = arrayOf(false, true, false)
                                     }
                                 }
                             )
@@ -200,12 +194,9 @@ fun main() {
                             Input(
                                 type = InputType.Radio,
                                 attrs = {
-                                    checked(asciiSelected)
+                                    checked(displayMode[2])
                                     onClick {
-                                        binarySelected = false
-                                        hexSelected = false
-                                        asciiSelected = true
-                                    }
+                                        displayMode = arrayOf(false, false, true)                                    }
                                 }
                             )
                             Span {
@@ -222,4 +213,8 @@ fun main() {
             }
         }
     }
+}
+
+fun refineByteArray(displayMode: Array<Boolean>) : String{
+    return ""
 }
