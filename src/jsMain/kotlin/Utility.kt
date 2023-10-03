@@ -5,7 +5,7 @@ class Utility {
 
         fun ByteArray.toBinary(): String {
             return this.joinToString("") { byte ->
-                byte.toString(2).padStart(8, '0')
+                byte.toUByte().toString(2).padStart(8, '0')
             }
         }
 
