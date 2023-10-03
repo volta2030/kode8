@@ -1,6 +1,7 @@
 import CustomComposeUI.Companion.TableHeader
 import CustomComposeUI.Companion.TableRows
 import Utility.Companion.toASCII
+import Utility.Companion.toBinary
 import Utility.Companion.toHex
 import androidx.compose.runtime.*
 import org.jetbrains.compose.web.attributes.InputType
@@ -15,10 +16,10 @@ import org.w3c.files.FileReader
 import org.w3c.files.get
 
 val version = "1.3.0"
+
 fun main() {
 
     val cols = 64
-    val chunkSize = 2
     val versionText = "Current v.${version}"
     val copyRightText = "Copyright © 2023 SnackLab(volta2030). All Rights Reserved."
     var selectedFile: File? = null
@@ -27,12 +28,13 @@ fun main() {
     var size by mutableStateOf(0)
 
     //radio buttons
-    var displayMode by mutableStateOf(arrayOf(false, true, false))
+    var displayMode by mutableStateOf(DisplayMode.HEX)
 
     var cellData by mutableStateOf(
         Array(1) { Array(cols) { "" } }
     )
     var coordinate by mutableStateOf(mutableListOf<Int>(0, 0))
+    var byteArray by mutableStateOf(byteArrayOf())
 
     renderComposable(rootElementId = "root") {
         Div({
@@ -79,18 +81,11 @@ fun main() {
                             fileReader.onload = { event ->
                                 val arrayBuffer = event.target.asDynamic().result as? ArrayBuffer
                                 if (arrayBuffer != null) {
-                                    val byteArray = Int8Array(arrayBuffer).unsafeCast<ByteArray>()
+                                    byteArray = Int8Array(arrayBuffer).unsafeCast<ByteArray>()
                                     size = byteArray.size
-                                    string = byteArray.toHex()
                                     rows = (byteArray.size - 1) / cols + 1
-                                    cellData = Array(rows) { Array(cols) { "" } }
-                                    for (i in 0 until rows) {
-                                        for (j in 0 until cols) {
-                                            val startIndex = i * cols * chunkSize + j * chunkSize
-                                            val endIndex = startIndex + chunkSize
-                                            cellData[i][j] = string.substring(startIndex, endIndex)
-                                        }
-                                    }
+                                    string = refineToString(byteArray, displayMode)
+                                    cellData = updateCellData(string, rows, cols, displayMode)
                                 }
                             }
                             selectedFile?.let { fileReader.readAsArrayBuffer(it) }
@@ -154,24 +149,26 @@ fun main() {
                 }
             }) {
                 Div {
-                    Text(if (coordinate[0] * coordinate[1] == 0) "" else "${(coordinate[0] - 1) * cols  + coordinate[1]}th byte = [ row : ${coordinate[0]} | column : ${coordinate[1]} ]")
+                    Text(if (coordinate[0] * coordinate[1] == 0) "" else "${(coordinate[0] - 1) * cols + coordinate[1]}th byte = [ row : ${coordinate[0]} | column : ${coordinate[1]} ]")
                 }
 
-                Div{
+                Div {
                     Fieldset {
 
                         Label {
                             Input(
                                 type = InputType.Radio,
                                 attrs = {
-                                 checked(displayMode[0])
-                                 onClick {
-                                    displayMode = arrayOf(true, false, false)
-                                 }
+                                    checked(displayMode==DisplayMode.BINARY)
+                                    onClick {
+                                        displayMode = DisplayMode.BINARY
+                                        string = refineToString(byteArray, displayMode)
+                                        cellData = updateCellData(string, rows, cols, displayMode)
+                                    }
                                 }
                             )
                             Span {
-                                Text("binary")
+                                Text("Binary")
                             }
                         }
 
@@ -179,9 +176,11 @@ fun main() {
                             Input(
                                 type = InputType.Radio,
                                 attrs = {
-                                    checked(displayMode[1])
+                                    checked(displayMode==DisplayMode.HEX)
                                     onClick {
-                                        displayMode = arrayOf(false, true, false)
+                                        displayMode = DisplayMode.HEX
+                                        string = refineToString(byteArray, displayMode)
+                                        cellData = updateCellData(string, rows, cols, displayMode)
                                     }
                                 }
                             )
@@ -194,9 +193,12 @@ fun main() {
                             Input(
                                 type = InputType.Radio,
                                 attrs = {
-                                    checked(displayMode[2])
+                                    checked(displayMode==DisplayMode.ASCII)
                                     onClick {
-                                        displayMode = arrayOf(false, false, true)                                    }
+                                        displayMode = DisplayMode.ASCII
+                                    }
+                                    string = refineToString(byteArray, displayMode)
+                                    cellData = updateCellData(string, rows, cols, displayMode)
                                 }
                             )
                             Span {
@@ -215,6 +217,27 @@ fun main() {
     }
 }
 
-fun refineByteArray(displayMode: Array<Boolean>) : String{
-    return ""
+fun refineToString(byteArray: ByteArray, displayMode: DisplayMode): String {
+
+    return when(displayMode){
+        DisplayMode.BINARY -> byteArray.toBinary()
+        DisplayMode.HEX -> byteArray.toHex()
+        DisplayMode.ASCII -> byteArray.toASCII()
+        else -> byteArray.toHex()
+    }
+}
+
+fun updateCellData(string: String, rows: Int, cols: Int,  displayMode: DisplayMode): Array<Array<String>> {
+    var cellData = Array(rows) { Array(cols) { "" } }
+    val chunkSize = displayMode.chunkSize
+
+    for (i in 0 until rows) {
+        for (j in 0 until cols) {
+            val startIndex = i * cols * chunkSize + j * chunkSize
+            val endIndex = startIndex + chunkSize
+            cellData[i][j] = string.substring(startIndex, endIndex)
+        }
+    }
+
+    return cellData
 }
