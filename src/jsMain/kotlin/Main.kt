@@ -25,6 +25,12 @@ fun main() {
     var string by mutableStateOf("")
     var rows by mutableStateOf(0)
     var size by mutableStateOf(0)
+
+    //radio buttons
+    var binarySelected by mutableStateOf(false)
+    var hexSelected by mutableStateOf(true)
+    var asciiSelected by mutableStateOf(false)
+
     var cellData by mutableStateOf(
         Array(1) { Array(cols) { "" } }
     )
@@ -129,7 +135,7 @@ fun main() {
                         textAlign("center")
                     }
                 }) {
-                    Text("$versionText / $copyRightText")
+                    Text("$versionText | $copyRightText")
 
                 }
             }
@@ -145,14 +151,70 @@ fun main() {
                     color(Color.white)
                     fontWeight(3)
                     display(DisplayStyle.Flex)
-                    justifyContent(JustifyContent.SpaceBetween)
                     flexDirection(FlexDirection.Row)
-                    alignItems(AlignItems.Center)
+                    justifyContent(JustifyContent.SpaceBetween)
                 }
             }) {
                 Div {
                     Text(if (coordinate[0] * coordinate[1] == 0) "" else "${(coordinate[0] - 1) * cols  + coordinate[1]}th byte = [ row : ${coordinate[0]} | column : ${coordinate[1]} ]")
                 }
+
+                Div{
+                    Fieldset {
+
+                        Label {
+                            Input(
+                                type = InputType.Radio,
+                                attrs = {
+                                 checked(binarySelected)
+                                 onClick {
+                                    binarySelected = true
+                                    hexSelected = false
+                                    asciiSelected = false
+                                 }
+                                }
+                            )
+                            Span {
+                                Text("binary")
+                            }
+                        }
+
+                        Label {
+                            Input(
+                                type = InputType.Radio,
+                                attrs = {
+                                    checked(hexSelected)
+                                    onClick {
+                                        binarySelected = false
+                                        hexSelected = true
+                                        asciiSelected = false
+                                    }
+                                }
+                            )
+                            Span {
+                                Text("Hex")
+                            }
+                        }
+
+                        Label {
+                            Input(
+                                type = InputType.Radio,
+                                attrs = {
+                                    checked(asciiSelected)
+                                    onClick {
+                                        binarySelected = false
+                                        hexSelected = false
+                                        asciiSelected = true
+                                    }
+                                }
+                            )
+                            Span {
+                                Text("ASCII")
+                            }
+                        }
+                    }
+                }
+
                 Div {
                     Text("Total $size Bytes")
                 }
