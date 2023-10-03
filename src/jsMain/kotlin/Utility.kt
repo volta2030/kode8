@@ -1,8 +1,18 @@
+import Utility.Companion.toInt
+
 class Utility {
     companion object {
 
-        fun Int.toHex() : String{
-            return this.toString(16).padStart(2, '0').uppercase()
+        fun ByteArray.toBinary(): String {
+            return this.joinToString("") { byte ->
+                byte.toString(2).padStart(8, '0')
+            }
+        }
+
+        fun ByteArray.toInt(): String {
+            return this.joinToString("") { byte ->
+                byte.toUByte().toInt().toString().padStart(3, '0')
+            }
         }
 
         fun ByteArray.toHex(): String {
@@ -28,12 +38,6 @@ class Utility {
             }
 
             return asciiChars.concatToString()
-        }
-
-        fun ByteArray.toBinary(): String {
-            return this.joinToString("") { byte ->
-                byte.toString(2).padStart(8, '0')
-            }
         }
     }
 }
