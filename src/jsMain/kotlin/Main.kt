@@ -1,7 +1,9 @@
 import CustomComposeUI.Companion.TableHeader
 import CustomComposeUI.Companion.TableRows
 import Utility.Companion.toASCII
+import Utility.Companion.toBinary
 import Utility.Companion.toHex
+import Utility.Companion.toInt
 import androidx.compose.runtime.*
 import org.jetbrains.compose.web.attributes.InputType
 import org.jetbrains.compose.web.css.*
@@ -14,21 +16,25 @@ import org.w3c.files.File
 import org.w3c.files.FileReader
 import org.w3c.files.get
 
-val version = "1.3.0"
+val version = "1.4.0"
+
 fun main() {
 
     val cols = 64
-    val chunkSize = 2
     val versionText = "Current v.${version}"
     val copyRightText = "Copyright © 2023 SnackLab(volta2030). All Rights Reserved."
     var selectedFile: File? = null
-    var string by mutableStateOf("")
     var rows by mutableStateOf(0)
     var size by mutableStateOf(0)
+
+    //radio buttons
+    var displayMode by mutableStateOf(DisplayMode.HEX)
+
     var cellData by mutableStateOf(
         Array(1) { Array(cols) { "" } }
     )
     var coordinate by mutableStateOf(mutableListOf<Int>(0, 0))
+    var byteArray by mutableStateOf(byteArrayOf())
 
     renderComposable(rootElementId = "root") {
         Div({
@@ -75,18 +81,11 @@ fun main() {
                             fileReader.onload = { event ->
                                 val arrayBuffer = event.target.asDynamic().result as? ArrayBuffer
                                 if (arrayBuffer != null) {
-                                    val byteArray = Int8Array(arrayBuffer).unsafeCast<ByteArray>()
+                                    byteArray = Int8Array(arrayBuffer).unsafeCast<ByteArray>()
                                     size = byteArray.size
-                                    string = byteArray.toHex()
                                     rows = (byteArray.size - 1) / cols + 1
-                                    cellData = Array(rows) { Array(cols) { "" } }
-                                    for (i in 0 until rows) {
-                                        for (j in 0 until cols) {
-                                            val startIndex = i * cols * chunkSize + j * chunkSize
-                                            val endIndex = startIndex + chunkSize
-                                            cellData[i][j] = string.substring(startIndex, endIndex)
-                                        }
-                                    }
+                                    val string = refineToString(byteArray, displayMode)
+                                    cellData = updateCellData(string, rows, cols, displayMode)
                                 }
                             }
                             selectedFile?.let { fileReader.readAsArrayBuffer(it) }
@@ -129,7 +128,7 @@ fun main() {
                         textAlign("center")
                     }
                 }) {
-                    Text("$versionText / $copyRightText")
+                    Text("$versionText | $copyRightText")
 
                 }
             }
@@ -145,14 +144,48 @@ fun main() {
                     color(Color.white)
                     fontWeight(3)
                     display(DisplayStyle.Flex)
-                    justifyContent(JustifyContent.SpaceBetween)
                     flexDirection(FlexDirection.Row)
-                    alignItems(AlignItems.Center)
+                    justifyContent(JustifyContent.SpaceBetween)
                 }
             }) {
                 Div {
-                    Text(if (coordinate[0] * coordinate[1] == 0) "" else "${(coordinate[0] - 1) * cols  + coordinate[1]}th byte = [ row : ${coordinate[0]} | column : ${coordinate[1]} ]")
+                    Text(if (coordinate[0] * coordinate[1] == 0) "" else "${(coordinate[0] - 1) * cols + coordinate[1]}th byte = [ row : ${coordinate[0]} | column : ${coordinate[1]} ]")
                 }
+
+                Div {
+                    Fieldset({
+                        style {
+                            padding(0.px)
+                        }
+                    }) {
+
+                        listOf(
+                            DisplayMode.BINARY,
+                            DisplayMode.INTEGER,
+                            DisplayMode.HEX,
+                            DisplayMode.ASCII
+                        ).forEach { mode ->
+
+                            Label {
+                                Input(
+                                    type = InputType.Radio,
+                                    attrs = {
+                                        checked(displayMode == mode)
+                                        onClick {
+                                            displayMode = mode
+                                            val string = refineToString(byteArray, displayMode)
+                                            cellData = updateCellData(string, rows, cols, displayMode)
+                                        }
+                                    }
+                                )
+                                Span {
+                                    Text(mode.label)
+                                }
+                            }
+                        }
+                    }
+                }
+
                 Div {
                     Text("Total $size Bytes")
                 }
@@ -160,4 +193,30 @@ fun main() {
             }
         }
     }
+}
+
+fun refineToString(byteArray: ByteArray, displayMode: DisplayMode): String {
+
+    return when (displayMode) {
+        DisplayMode.BINARY -> byteArray.toBinary()
+        DisplayMode.INTEGER -> byteArray.toInt()
+        DisplayMode.HEX -> byteArray.toHex()
+        DisplayMode.ASCII -> byteArray.toASCII()
+        else -> byteArray.toHex()
+    }
+}
+
+fun updateCellData(string: String, rows: Int, cols: Int, displayMode: DisplayMode): Array<Array<String>> {
+    var cellData = Array(rows) { Array(cols) { "" } }
+    val chunkSize = displayMode.chunkSize
+
+    for (i in 0 until rows) {
+        for (j in 0 until cols) {
+            val startIndex = i * cols * chunkSize + j * chunkSize
+            val endIndex = startIndex + chunkSize
+            cellData[i][j] = string.substring(startIndex, endIndex)
+        }
+    }
+
+    return cellData
 }
