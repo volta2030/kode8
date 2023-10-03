@@ -34,7 +34,7 @@ class Utility {
             val asciiChars = CharArray(this.size)
 
             for (i in indices) {
-                asciiChars[i] = this[i].toInt().toChar()
+                asciiChars[i] = this[i].toUByte().toInt().toChar()
             }
 
             return asciiChars.concatToString()
