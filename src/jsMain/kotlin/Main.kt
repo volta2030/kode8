@@ -16,7 +16,7 @@ import org.w3c.files.File
 import org.w3c.files.FileReader
 import org.w3c.files.get
 
-val version = "1.3.0"
+val version = "1.4.0"
 
 fun main() {
 
