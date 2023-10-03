@@ -3,6 +3,7 @@ import CustomComposeUI.Companion.TableRows
 import Utility.Companion.toASCII
 import Utility.Companion.toBinary
 import Utility.Companion.toHex
+import Utility.Companion.toInt
 import androidx.compose.runtime.*
 import org.jetbrains.compose.web.attributes.InputType
 import org.jetbrains.compose.web.css.*
@@ -23,7 +24,6 @@ fun main() {
     val versionText = "Current v.${version}"
     val copyRightText = "Copyright © 2023 SnackLab(volta2030). All Rights Reserved."
     var selectedFile: File? = null
-    var string by mutableStateOf("")
     var rows by mutableStateOf(0)
     var size by mutableStateOf(0)
 
@@ -84,7 +84,7 @@ fun main() {
                                     byteArray = Int8Array(arrayBuffer).unsafeCast<ByteArray>()
                                     size = byteArray.size
                                     rows = (byteArray.size - 1) / cols + 1
-                                    string = refineToString(byteArray, displayMode)
+                                    val string = refineToString(byteArray, displayMode)
                                     cellData = updateCellData(string, rows, cols, displayMode)
                                 }
                             }
@@ -153,56 +153,34 @@ fun main() {
                 }
 
                 Div {
-                    Fieldset {
-
-                        Label {
-                            Input(
-                                type = InputType.Radio,
-                                attrs = {
-                                    checked(displayMode==DisplayMode.BINARY)
-                                    onClick {
-                                        displayMode = DisplayMode.BINARY
-                                        string = refineToString(byteArray, displayMode)
-                                        cellData = updateCellData(string, rows, cols, displayMode)
-                                    }
-                                }
-                            )
-                            Span {
-                                Text("Binary")
-                            }
+                    Fieldset({
+                        style {
+                            padding(0.px)
                         }
+                    }) {
 
-                        Label {
-                            Input(
-                                type = InputType.Radio,
-                                attrs = {
-                                    checked(displayMode==DisplayMode.HEX)
-                                    onClick {
-                                        displayMode = DisplayMode.HEX
-                                        string = refineToString(byteArray, displayMode)
-                                        cellData = updateCellData(string, rows, cols, displayMode)
-                                    }
-                                }
-                            )
-                            Span {
-                                Text("Hex")
-                            }
-                        }
+                        listOf(
+                            DisplayMode.BINARY,
+                            DisplayMode.INTEGER,
+                            DisplayMode.HEX,
+                            DisplayMode.ASCII
+                        ).forEach { mode ->
 
-                        Label {
-                            Input(
-                                type = InputType.Radio,
-                                attrs = {
-                                    checked(displayMode==DisplayMode.ASCII)
-                                    onClick {
-                                        displayMode = DisplayMode.ASCII
+                            Label {
+                                Input(
+                                    type = InputType.Radio,
+                                    attrs = {
+                                        checked(displayMode == mode)
+                                        onClick {
+                                            displayMode = mode
+                                            val string = refineToString(byteArray, displayMode)
+                                            cellData = updateCellData(string, rows, cols, displayMode)
+                                        }
                                     }
-                                    string = refineToString(byteArray, displayMode)
-                                    cellData = updateCellData(string, rows, cols, displayMode)
+                                )
+                                Span {
+                                    Text(mode.label)
                                 }
-                            )
-                            Span {
-                                Text("ASCII")
                             }
                         }
                     }
@@ -219,15 +197,16 @@ fun main() {
 
 fun refineToString(byteArray: ByteArray, displayMode: DisplayMode): String {
 
-    return when(displayMode){
+    return when (displayMode) {
         DisplayMode.BINARY -> byteArray.toBinary()
+        DisplayMode.INTEGER -> byteArray.toInt()
         DisplayMode.HEX -> byteArray.toHex()
         DisplayMode.ASCII -> byteArray.toASCII()
         else -> byteArray.toHex()
     }
 }
 
-fun updateCellData(string: String, rows: Int, cols: Int,  displayMode: DisplayMode): Array<Array<String>> {
+fun updateCellData(string: String, rows: Int, cols: Int, displayMode: DisplayMode): Array<Array<String>> {
     var cellData = Array(rows) { Array(cols) { "" } }
     val chunkSize = displayMode.chunkSize
 

@@ -1,6 +1,6 @@
-enum class DisplayMode(val chunkSize : Int) {
-    BINARY(8),
-    INTEGER(3),
-    HEX(2),
-    ASCII(1)
+enum class DisplayMode(val chunkSize : Int, val label : String) {
+    BINARY(8, "Binary"),
+    INTEGER(3, "Integer"),
+    HEX(2, "Hex"),
+    ASCII(1, "ASCII")
 }
