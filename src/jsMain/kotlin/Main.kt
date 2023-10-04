@@ -28,9 +28,7 @@ fun main() {
     val copyRightText = "Copyright © 2023 SnackLab(volta2030). All Rights Reserved."
     val sourceCodeLink = "https://github.com/volta2030/kode8"
     var selectedFile: File? = null
-    var col by mutableStateOf(0 as Number)
     var cols by mutableStateOf(64)
-    var row by mutableStateOf(0 as Number)
     var rows by mutableStateOf(0)
     var size by mutableStateOf(0)
 
@@ -40,8 +38,8 @@ fun main() {
     var cellData by mutableStateOf(
         Array(1) { Array(cols) { "" } }
     )
-    var coordinate by mutableStateOf(mutableListOf<Int>(0, 0))
-    var selectedCell by mutableStateOf<Pair<Int, Int>>(Pair(0,0))
+
+    var selectedCell by mutableStateOf<Pair<Int, Int>>(Pair(-1,-1))
     var byteArray by mutableStateOf(byteArrayOf())
 
     renderComposable(rootElementId = "root") {
@@ -128,9 +126,6 @@ fun main() {
                         {newSelectedCell ->
                             selectedCell = newSelectedCell
                         },
-                        { newCoordinate ->
-                            coordinate = newCoordinate.toMutableList()
-                        }
                     )
                 }
                 Div({
@@ -173,28 +168,35 @@ fun main() {
             }) {
 
                 Div {
-                    Text(if (coordinate[0] * coordinate[1] == 0) "" else "${(coordinate[0] - 1) * cols + coordinate[1]}th byte = [ row : ${coordinate[0]} | column : ${coordinate[1]} ]")
-                    NumberInput {
-                        defaultValue(coordinate[0])
+                    Text(if (selectedCell.first < 0 && selectedCell.second < 0) "" else "${(selectedCell.first) * cols + selectedCell.second + 1}th byte = ")
 
-                        onChange { e->
-                            coordinate[0] = e.value as Int
-                            selectedCell = Pair(coordinate[0]-1, coordinate[1]-1)
+                    Label {
+                        Text("row : ")
+                        NumberInput {
+                            defaultValue(if(selectedFile!=null) selectedCell.first + 1 else -1)
 
+                            onChange { e->
+
+                                selectedCell = Pair(e.value as Int - 1, selectedCell.second)
+
+                            }
+
+                            min("0")
+                            max(rows.toString())
                         }
-
-                        min("0")
-                        max(rows.toString())
                     }
-                    NumberInput {
-                        defaultValue(coordinate[1])
-                        onChange { e->
-                            coordinate[1] = e.value as Int
-                            selectedCell = Pair(coordinate[0]-1, coordinate[1]-1)
-                        }
 
-                        min("0")
-                        max(cols.toString())
+                    Label {
+                        Text("column : ")
+                        NumberInput {
+                            defaultValue(if(selectedFile!=null) selectedCell.second + 1 else -1)
+                            onChange { e->
+                                selectedCell = Pair(selectedCell.first, e.value as Int - 1)
+                            }
+
+                            min("0")
+                            max(cols.toString())
+                        }
                     }
                 }
 

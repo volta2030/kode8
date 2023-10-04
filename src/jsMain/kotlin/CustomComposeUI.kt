@@ -1,6 +1,4 @@
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.*
 
@@ -35,7 +33,6 @@ class CustomComposeUI {
             cellData: Array<Array<String>>,
             selectedCell : Pair<Int, Int>,
             setSelectedCell : (Pair<Int, Int>) -> Unit,
-            setCoordinate: (List<Int>) -> Unit
         ) {
 
             repeat(numberOfRows) { i ->
@@ -65,7 +62,6 @@ class CustomComposeUI {
                             onClick {
                                 if (cellData[i][j] != "") {
                                     setSelectedCell(Pair(i, j))
-                                    setCoordinate(listOf(i + 1, j + 1))
                                 }
                             }
 
