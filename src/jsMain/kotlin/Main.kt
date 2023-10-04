@@ -133,6 +133,13 @@ fun main() {
                     }
                 }) {
                     Text("$versionText | $copyRightText |" )
+                    Div({
+                        style {
+                            width(5.px)
+                        }
+
+                    }) {
+                    }
                     A(href = sourceCodeLink){
                         Text("Source Code")
                     }
