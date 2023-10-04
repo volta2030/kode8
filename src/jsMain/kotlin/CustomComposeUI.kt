@@ -30,12 +30,13 @@ class CustomComposeUI {
 
         @Composable
         fun TableRows(
-            cols: Int, numberOfRows: Int, cellData: Array<Array<String>>,
+            cols: Int,
+            numberOfRows: Int,
+            cellData: Array<Array<String>>,
+            selectedCell : Pair<Int, Int>,
+            setSelectedCell : (Pair<Int, Int>) -> Unit,
             setCoordinate: (List<Int>) -> Unit
         ) {
-
-            val selectedCell = remember { mutableStateOf<Pair<Int, Int>?>(null) }
-
 
             repeat(numberOfRows) { i ->
                 Tr {
@@ -51,7 +52,7 @@ class CustomComposeUI {
 
                     repeat(cols) { j ->
 
-                        val isSelected = selectedCell.value == Pair(i, j)
+                        val isSelected = (selectedCell == Pair(i, j))
 
                         Td({
                             style {
@@ -63,7 +64,7 @@ class CustomComposeUI {
 
                             onClick {
                                 if (cellData[i][j] != "") {
-                                    selectedCell.value = Pair(i, j)
+                                    setSelectedCell(Pair(i, j))
                                     setCoordinate(listOf(i + 1, j + 1))
                                 }
                             }

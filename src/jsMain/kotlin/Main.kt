@@ -7,6 +7,8 @@ import Utility.Companion.toHex
 import Utility.Companion.toOctal
 import androidx.compose.runtime.*
 import org.jetbrains.compose.web.attributes.InputType
+import org.jetbrains.compose.web.attributes.max
+import org.jetbrains.compose.web.attributes.min
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.*
 import org.jetbrains.compose.web.renderComposable
@@ -16,6 +18,7 @@ import org.w3c.dom.HTMLInputElement
 import org.w3c.files.File
 import org.w3c.files.FileReader
 import org.w3c.files.get
+import kotlin.math.absoluteValue
 
 val version = "1.4.0"
 
@@ -25,7 +28,9 @@ fun main() {
     val copyRightText = "Copyright © 2023 SnackLab(volta2030). All Rights Reserved."
     val sourceCodeLink = "https://github.com/volta2030/kode8"
     var selectedFile: File? = null
+    var col by mutableStateOf(0 as Number)
     var cols by mutableStateOf(64)
+    var row by mutableStateOf(0 as Number)
     var rows by mutableStateOf(0)
     var size by mutableStateOf(0)
 
@@ -36,6 +41,7 @@ fun main() {
         Array(1) { Array(cols) { "" } }
     )
     var coordinate by mutableStateOf(mutableListOf<Int>(0, 0))
+    var selectedCell by mutableStateOf<Pair<Int, Int>>(Pair(0,0))
     var byteArray by mutableStateOf(byteArrayOf())
 
     renderComposable(rootElementId = "root") {
@@ -118,6 +124,10 @@ fun main() {
                 }) {
                     TableHeader(cols)
                     TableRows(cols, rows, cellData,
+                        selectedCell,
+                        {newSelectedCell ->
+                            selectedCell = newSelectedCell
+                        },
                         { newCoordinate ->
                             coordinate = newCoordinate.toMutableList()
                         }
@@ -132,7 +142,7 @@ fun main() {
                         textAlign("center")
                     }
                 }) {
-                    Text("$versionText | $copyRightText |" )
+                    Text("$versionText | $copyRightText |")
                     Div({
                         style {
                             width(5.px)
@@ -140,7 +150,7 @@ fun main() {
 
                     }) {
                     }
-                    A(href = sourceCodeLink){
+                    A(href = sourceCodeLink) {
                         Text("Source Code")
                     }
                 }
@@ -161,8 +171,31 @@ fun main() {
                     justifyContent(JustifyContent.SpaceBetween)
                 }
             }) {
+
                 Div {
                     Text(if (coordinate[0] * coordinate[1] == 0) "" else "${(coordinate[0] - 1) * cols + coordinate[1]}th byte = [ row : ${coordinate[0]} | column : ${coordinate[1]} ]")
+                    NumberInput {
+                        defaultValue(coordinate[0])
+
+                        onChange { e->
+                            coordinate[0] = e.value as Int
+                            selectedCell = Pair(coordinate[0]-1, coordinate[1]-1)
+
+                        }
+
+                        min("0")
+                        max(rows.toString())
+                    }
+                    NumberInput {
+                        defaultValue(coordinate[1])
+                        onChange { e->
+                            coordinate[1] = e.value as Int
+                            selectedCell = Pair(coordinate[0]-1, coordinate[1]-1)
+                        }
+
+                        min("0")
+                        max(cols.toString())
+                    }
                 }
 
                 Div {
@@ -190,7 +223,7 @@ fun main() {
                                 Input(
                                     type = InputType.Radio,
                                     attrs = {
-                                        checked( mode == cols)
+                                        checked(mode == cols)
                                         onClick {
                                             cols = mode
                                             rows = (byteArray.size - 1) / cols + 1
