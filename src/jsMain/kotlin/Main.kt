@@ -86,8 +86,7 @@ fun main() {
                                     byteArray = Int8Array(arrayBuffer).unsafeCast<ByteArray>()
                                     size = byteArray.size
                                     rows = (byteArray.size - 1) / cols + 1
-                                    val string = refineToString(byteArray, displayMode)
-                                    cellData = updateCellData(string, rows, cols, displayMode)
+                                    cellData = updateCellData(byteArray, rows, cols, displayMode)
                                 }
                             }
                             selectedFile?.let { fileReader.readAsArrayBuffer(it) }
@@ -181,8 +180,7 @@ fun main() {
                                         checked(displayMode == mode)
                                         onClick {
                                             displayMode = mode
-                                            val string = refineToString(byteArray, displayMode)
-                                            cellData = updateCellData(string, rows, cols, displayMode)
+                                            cellData = updateCellData(byteArray, rows, cols, displayMode)
                                         }
                                     }
                                 )
@@ -215,9 +213,10 @@ fun refineToString(byteArray: ByteArray, displayMode: DisplayMode): String {
     }
 }
 
-fun updateCellData(string: String, rows: Int, cols: Int, displayMode: DisplayMode): Array<Array<String>> {
+fun updateCellData(byteArray: ByteArray, rows: Int, cols: Int, displayMode: DisplayMode): Array<Array<String>> {
     var cellData = Array(rows) { Array(cols) { "" } }
     val chunkSize = displayMode.chunkSize
+    val string = refineToString(byteArray, displayMode)
 
     for (i in 0 until rows) {
         for (j in 0 until cols) {
