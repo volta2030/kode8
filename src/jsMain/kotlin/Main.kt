@@ -23,6 +23,7 @@ fun main() {
     val cols = 64
     val versionText = "Current v.${version}"
     val copyRightText = "Copyright © 2023 SnackLab(volta2030). All Rights Reserved."
+    val sourceCodeLink = "https://github.com/volta2030/kode8"
     var selectedFile: File? = null
     var rows by mutableStateOf(0)
     var size by mutableStateOf(0)
@@ -124,12 +125,20 @@ fun main() {
                 }
                 Div({
                     style {
+                        display(DisplayStyle.Flex)
+                        flexDirection(FlexDirection.Row)
+                        justifyContent(JustifyContent.Center)
                         color(Color.gray)
                         textAlign("center")
                     }
                 }) {
-                    Text("$versionText | $copyRightText")
+                    Text("$versionText | $copyRightText | " )
+                    A(
+                        href = sourceCodeLink
+                    ){
 
+                        Text("Source Code")
+                    }
                 }
             }
 
