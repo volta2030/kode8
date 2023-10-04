@@ -1,6 +1,7 @@
 enum class DisplayMode(val chunkSize : Int, val label : String) {
     BINARY(8, "Binary"),
-    INTEGER(3, "Integer"),
-    HEX(2, "Hex"),
+    OCTAL(3, "Octal"),
+    DECIMAL(3, "Decimal"),
+    HEXA_DECIMAL(2, "Hexadecimal"),
     ASCII(1, "ASCII")
 }

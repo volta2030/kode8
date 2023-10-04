@@ -2,8 +2,10 @@ import CustomComposeUI.Companion.TableHeader
 import CustomComposeUI.Companion.TableRows
 import Utility.Companion.toASCII
 import Utility.Companion.toBinary
+import Utility.Companion.toDecimal
 import Utility.Companion.toHex
-import Utility.Companion.toInt
+import Utility.Companion.toDecimal
+import Utility.Companion.toOctal
 import androidx.compose.runtime.*
 import org.jetbrains.compose.web.attributes.InputType
 import org.jetbrains.compose.web.css.*
@@ -29,7 +31,7 @@ fun main() {
     var size by mutableStateOf(0)
 
     //radio buttons
-    var displayMode by mutableStateOf(DisplayMode.HEX)
+    var displayMode by mutableStateOf(DisplayMode.HEXA_DECIMAL)
 
     var cellData by mutableStateOf(
         Array(1) { Array(cols) { "" } }
@@ -132,11 +134,8 @@ fun main() {
                         textAlign("center")
                     }
                 }) {
-                    Text("$versionText | $copyRightText | " )
-                    A(
-                        href = sourceCodeLink
-                    ){
-
+                    Text("$versionText | $copyRightText |" )
+                    A(href = sourceCodeLink){
                         Text("Source Code")
                     }
                 }
@@ -170,8 +169,9 @@ fun main() {
 
                         listOf(
                             DisplayMode.BINARY,
-                            DisplayMode.INTEGER,
-                            DisplayMode.HEX,
+                            DisplayMode.OCTAL,
+                            DisplayMode.DECIMAL,
+                            DisplayMode.HEXA_DECIMAL,
                             DisplayMode.ASCII
                         ).forEach { mode ->
 
@@ -208,8 +208,9 @@ fun refineToString(byteArray: ByteArray, displayMode: DisplayMode): String {
 
     return when (displayMode) {
         DisplayMode.BINARY -> byteArray.toBinary()
-        DisplayMode.INTEGER -> byteArray.toInt()
-        DisplayMode.HEX -> byteArray.toHex()
+        DisplayMode.OCTAL -> byteArray.toOctal()
+        DisplayMode.DECIMAL -> byteArray.toDecimal()
+        DisplayMode.HEXA_DECIMAL -> byteArray.toHex()
         DisplayMode.ASCII -> byteArray.toASCII()
         else -> byteArray.toHex()
     }

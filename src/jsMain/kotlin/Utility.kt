@@ -1,5 +1,3 @@
-import Utility.Companion.toInt
-
 class Utility {
     companion object {
 
@@ -9,7 +7,13 @@ class Utility {
             }
         }
 
-        fun ByteArray.toInt(): String {
+        fun ByteArray.toOctal(): String {
+            return this.joinToString("") { byte ->
+                byte.toUByte().toString(8).padStart(3, '0')
+            }
+        }
+
+        fun ByteArray.toDecimal(): String {
             return this.joinToString("") { byte ->
                 byte.toUByte().toInt().toString().padStart(3, '0')
             }
