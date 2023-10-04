@@ -21,16 +21,16 @@ val version = "1.4.0"
 
 fun main() {
 
-    val cols = 64
     val versionText = "Current v.${version}"
     val copyRightText = "Copyright © 2023 SnackLab(volta2030). All Rights Reserved."
     val sourceCodeLink = "https://github.com/volta2030/kode8"
     var selectedFile: File? = null
+    var cols by mutableStateOf(64)
     var rows by mutableStateOf(0)
     var size by mutableStateOf(0)
 
     //radio buttons
-    var displayMode by mutableStateOf(DisplayMode.HEXA_DECIMAL)
+    var base by mutableStateOf(Base.HEXA_DECIMAL)
 
     var cellData by mutableStateOf(
         Array(1) { Array(cols) { "" } }
@@ -86,7 +86,7 @@ fun main() {
                                     byteArray = Int8Array(arrayBuffer).unsafeCast<ByteArray>()
                                     size = byteArray.size
                                     rows = (byteArray.size - 1) / cols + 1
-                                    cellData = updateCellData(byteArray, rows, cols, displayMode)
+                                    cellData = updateCellData(byteArray, rows, cols, base)
                                 }
                             }
                             selectedFile?.let { fileReader.readAsArrayBuffer(it) }
@@ -168,26 +168,81 @@ fun main() {
                 Div {
                     Fieldset({
                         style {
-                            padding(0.px)
+                            display(DisplayStyle.Flex)
+                            flexDirection(FlexDirection.Row)
+                            padding(1.px)
+                            paddingLeft(2.px)
+                            paddingRight(2.px)
                         }
                     }) {
-
+                        Div({
+                            style {
+                                padding(0.px)
+                                fontWeight("bold")
+                            }
+                        }) {
+                            Text("Column")
+                        }
                         listOf(
-                            DisplayMode.BINARY,
-                            DisplayMode.OCTAL,
-                            DisplayMode.DECIMAL,
-                            DisplayMode.HEXA_DECIMAL,
-                            DisplayMode.ASCII
+                            16, 32, 64
+                        ).forEach { mode ->
+                            Label {
+                                Input(
+                                    type = InputType.Radio,
+                                    attrs = {
+                                        checked( mode == cols)
+                                        onClick {
+                                            cols = mode
+                                            rows = (byteArray.size - 1) / cols + 1
+                                            cellData = updateCellData(byteArray, rows, cols, base)
+                                        }
+                                    }
+                                )
+                                Span {
+                                    Text(mode.toString())
+                                }
+                            }
+                        }
+                    }
+
+                }
+
+
+                Div {
+                    Fieldset({
+                        style {
+                            display(DisplayStyle.Flex)
+                            flexDirection(FlexDirection.Row)
+                            padding(1.px)
+                            paddingLeft(2.px)
+                            paddingRight(2.px)
+                        }
+                    }) {
+                        Div({
+                            style {
+                                padding(0.px)
+                                fontWeight("bold")
+                            }
+                        }) {
+                            Text("Base")
+                        }
+                        listOf(
+                            Base.BINARY,
+                            Base.OCTAL,
+                            Base.DECIMAL,
+                            Base.HEXA_DECIMAL,
+                            Base.ASCII
                         ).forEach { mode ->
 
                             Label {
                                 Input(
                                     type = InputType.Radio,
                                     attrs = {
-                                        checked(displayMode == mode)
+                                        checked(base == mode)
                                         onClick {
-                                            displayMode = mode
-                                            cellData = updateCellData(byteArray, rows, cols, displayMode)
+                                            base = mode
+                                            rows = (byteArray.size - 1) / cols + 1
+                                            cellData = updateCellData(byteArray, rows, cols, base)
                                         }
                                     }
                                 )
@@ -208,22 +263,22 @@ fun main() {
     }
 }
 
-fun refineToString(byteArray: ByteArray, displayMode: DisplayMode): String {
+fun refineToString(byteArray: ByteArray, base: Base): String {
 
-    return when (displayMode) {
-        DisplayMode.BINARY -> byteArray.toBinary()
-        DisplayMode.OCTAL -> byteArray.toOctal()
-        DisplayMode.DECIMAL -> byteArray.toDecimal()
-        DisplayMode.HEXA_DECIMAL -> byteArray.toHex()
-        DisplayMode.ASCII -> byteArray.toASCII()
+    return when (base) {
+        Base.BINARY -> byteArray.toBinary()
+        Base.OCTAL -> byteArray.toOctal()
+        Base.DECIMAL -> byteArray.toDecimal()
+        Base.HEXA_DECIMAL -> byteArray.toHex()
+        Base.ASCII -> byteArray.toASCII()
         else -> byteArray.toHex()
     }
 }
 
-fun updateCellData(byteArray: ByteArray, rows: Int, cols: Int, displayMode: DisplayMode): Array<Array<String>> {
+fun updateCellData(byteArray: ByteArray, rows: Int, cols: Int, base: Base): Array<Array<String>> {
     var cellData = Array(rows) { Array(cols) { "" } }
-    val chunkSize = displayMode.chunkSize
-    val string = refineToString(byteArray, displayMode)
+    val chunkSize = base.chunkSize
+    val string = refineToString(byteArray, base)
 
     for (i in 0 until rows) {
         for (j in 0 until cols) {
