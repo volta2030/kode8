@@ -7,6 +7,7 @@ import Utility.Companion.toHex
 import Utility.Companion.toOctal
 import androidx.compose.runtime.*
 import org.jetbrains.compose.web.attributes.InputType
+import org.jetbrains.compose.web.attributes.builders.InputAttrsScope
 import org.jetbrains.compose.web.attributes.max
 import org.jetbrains.compose.web.attributes.min
 import org.jetbrains.compose.web.css.*
@@ -172,29 +173,40 @@ fun main() {
 
                     Label {
                         Text("row : ")
-                        NumberInput {
+                        NumberInput{
+                            style {
+                                width(35.px)
+                            }
+
                             defaultValue(if(selectedFile!=null) selectedCell.first + 1 else -1)
 
                             onChange { e->
-
                                 selectedCell = Pair(e.value as Int - 1, selectedCell.second)
-
                             }
 
-                            min("0")
                             max(rows.toString())
                         }
                     }
 
                     Label {
+                        Text(" ")
+                    }
+
+                    Label {
                         Text("column : ")
                         NumberInput {
+
+                            style {
+                                width(35.px)
+                            }
+
                             defaultValue(if(selectedFile!=null) selectedCell.second + 1 else -1)
+
                             onChange { e->
                                 selectedCell = Pair(selectedCell.first, e.value as Int - 1)
                             }
 
-                            min("0")
+
                             max(cols.toString())
                         }
                     }

@@ -31,8 +31,8 @@ class CustomComposeUI {
             cols: Int,
             numberOfRows: Int,
             cellData: Array<Array<String>>,
-            selectedCell : Pair<Int, Int>,
-            setSelectedCell : (Pair<Int, Int>) -> Unit,
+            selectedCell: Pair<Int, Int>,
+            setSelectedCell: (Pair<Int, Int>) -> Unit,
         ) {
 
             repeat(numberOfRows) { i ->
@@ -53,6 +53,7 @@ class CustomComposeUI {
 
                         Td({
                             style {
+                                fontWeight(if (isSelected) "bold" else "normal")
                                 backgroundColor(if (isSelected) Color.rebeccapurple else Color.transparent)
                                 color(if (isSelected) Color.white else Color.black)
                                 textAlign("center")
