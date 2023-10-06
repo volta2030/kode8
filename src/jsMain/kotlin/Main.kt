@@ -6,10 +6,9 @@ import Utility.Companion.toDecimal
 import Utility.Companion.toHex
 import Utility.Companion.toOctal
 import androidx.compose.runtime.*
+import kotlinx.browser.document
 import org.jetbrains.compose.web.attributes.InputType
-import org.jetbrains.compose.web.attributes.builders.InputAttrsScope
 import org.jetbrains.compose.web.attributes.max
-import org.jetbrains.compose.web.attributes.min
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.*
 import org.jetbrains.compose.web.renderComposable
@@ -19,7 +18,6 @@ import org.w3c.dom.HTMLInputElement
 import org.w3c.files.File
 import org.w3c.files.FileReader
 import org.w3c.files.get
-import kotlin.math.absoluteValue
 
 val version = "1.4.0"
 
@@ -122,9 +120,10 @@ fun main() {
                     }
                 }) {
                     TableHeader(cols)
-                    TableRows(cols, rows, cellData,
+                    TableRows(
+                        cols, rows, cellData,
                         selectedCell,
-                        {newSelectedCell ->
+                        { newSelectedCell ->
                             selectedCell = newSelectedCell
                         },
                     )
@@ -173,19 +172,7 @@ fun main() {
 
                     Label {
                         Text("row : ")
-                        NumberInput{
-                            style {
-                                width(35.px)
-                            }
-
-                            defaultValue(if(selectedFile!=null) selectedCell.first + 1 else -1)
-
-                            onChange { e->
-                                selectedCell = Pair(e.value as Int - 1, selectedCell.second)
-                            }
-
-                            max(rows.toString())
-                        }
+                        Text((selectedCell.first + 1).toString())
                     }
 
                     Label {
@@ -194,21 +181,7 @@ fun main() {
 
                     Label {
                         Text("column : ")
-                        NumberInput {
-
-                            style {
-                                width(35.px)
-                            }
-
-                            defaultValue(if(selectedFile!=null) selectedCell.second + 1 else -1)
-
-                            onChange { e->
-                                selectedCell = Pair(selectedCell.first, e.value as Int - 1)
-                            }
-
-
-                            max(cols.toString())
-                        }
+                        Text((selectedCell.second + 1).toString())
                     }
                 }
 
