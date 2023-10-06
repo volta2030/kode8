@@ -214,6 +214,11 @@ fun main() {
                                         onClick {
                                             cols = mode
                                             rows = (byteArray.size - 1) / cols + 1
+
+                                            if(selectedCell.first > rows || selectedCell.second > cols){
+                                                selectedCell = Pair(0, 0)
+                                            }
+
                                             cellData = updateCellData(byteArray, rows, cols, base)
                                         }
                                     }
