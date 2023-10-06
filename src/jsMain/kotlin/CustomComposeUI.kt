@@ -1,6 +1,4 @@
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.*
 
@@ -30,12 +28,12 @@ class CustomComposeUI {
 
         @Composable
         fun TableRows(
-            cols: Int, numberOfRows: Int, cellData: Array<Array<String>>,
-            setCoordinate: (List<Int>) -> Unit
+            cols: Int,
+            numberOfRows: Int,
+            cellData: Array<Array<String>>,
+            selectedCell: Pair<Int, Int>,
+            setSelectedCell: (Pair<Int, Int>) -> Unit,
         ) {
-
-            val selectedCell = remember { mutableStateOf<Pair<Int, Int>?>(null) }
-
 
             repeat(numberOfRows) { i ->
                 Tr {
@@ -51,10 +49,11 @@ class CustomComposeUI {
 
                     repeat(cols) { j ->
 
-                        val isSelected = selectedCell.value == Pair(i, j)
+                        val isSelected = (selectedCell == Pair(i, j))
 
                         Td({
                             style {
+                                fontWeight(if (isSelected) "bold" else "normal")
                                 backgroundColor(if (isSelected) Color.rebeccapurple else Color.transparent)
                                 color(if (isSelected) Color.white else Color.black)
                                 textAlign("center")
@@ -63,8 +62,7 @@ class CustomComposeUI {
 
                             onClick {
                                 if (cellData[i][j] != "") {
-                                    selectedCell.value = Pair(i, j)
-                                    setCoordinate(listOf(i + 1, j + 1))
+                                    setSelectedCell(Pair(i, j))
                                 }
                             }
 

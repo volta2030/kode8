@@ -2,10 +2,13 @@ import CustomComposeUI.Companion.TableHeader
 import CustomComposeUI.Companion.TableRows
 import Utility.Companion.toASCII
 import Utility.Companion.toBinary
+import Utility.Companion.toDecimal
 import Utility.Companion.toHex
-import Utility.Companion.toInt
+import Utility.Companion.toOctal
 import androidx.compose.runtime.*
+import kotlinx.browser.document
 import org.jetbrains.compose.web.attributes.InputType
+import org.jetbrains.compose.web.attributes.max
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.*
 import org.jetbrains.compose.web.renderComposable
@@ -16,24 +19,26 @@ import org.w3c.files.File
 import org.w3c.files.FileReader
 import org.w3c.files.get
 
-val version = "1.4.0"
+val version = "1.5.0"
 
 fun main() {
 
-    val cols = 64
     val versionText = "Current v.${version}"
     val copyRightText = "Copyright © 2023 SnackLab(volta2030). All Rights Reserved."
+    val sourceCodeLink = "https://github.com/volta2030/kode8"
     var selectedFile: File? = null
+    var cols by mutableStateOf(64)
     var rows by mutableStateOf(0)
     var size by mutableStateOf(0)
 
     //radio buttons
-    var displayMode by mutableStateOf(DisplayMode.HEX)
+    var base by mutableStateOf(Base.HEXA_DECIMAL)
 
     var cellData by mutableStateOf(
         Array(1) { Array(cols) { "" } }
     )
-    var coordinate by mutableStateOf(mutableListOf<Int>(0, 0))
+
+    var selectedCell by mutableStateOf<Pair<Int, Int>>(Pair(-1,-1))
     var byteArray by mutableStateOf(byteArrayOf())
 
     renderComposable(rootElementId = "root") {
@@ -84,8 +89,7 @@ fun main() {
                                     byteArray = Int8Array(arrayBuffer).unsafeCast<ByteArray>()
                                     size = byteArray.size
                                     rows = (byteArray.size - 1) / cols + 1
-                                    val string = refineToString(byteArray, displayMode)
-                                    cellData = updateCellData(string, rows, cols, displayMode)
+                                    cellData = updateCellData(byteArray, rows, cols, base)
                                 }
                             }
                             selectedFile?.let { fileReader.readAsArrayBuffer(it) }
@@ -116,20 +120,34 @@ fun main() {
                     }
                 }) {
                     TableHeader(cols)
-                    TableRows(cols, rows, cellData,
-                        { newCoordinate ->
-                            coordinate = newCoordinate.toMutableList()
-                        }
+                    TableRows(
+                        cols, rows, cellData,
+                        selectedCell,
+                        { newSelectedCell ->
+                            selectedCell = newSelectedCell
+                        },
                     )
                 }
                 Div({
                     style {
+                        display(DisplayStyle.Flex)
+                        flexDirection(FlexDirection.Row)
+                        justifyContent(JustifyContent.Center)
                         color(Color.gray)
                         textAlign("center")
                     }
                 }) {
-                    Text("$versionText | $copyRightText")
+                    Text("$versionText | $copyRightText |")
+                    Div({
+                        style {
+                            width(5.px)
+                        }
 
+                    }) {
+                    }
+                    A(href = sourceCodeLink) {
+                        Text("Source Code")
+                    }
                 }
             }
 
@@ -148,33 +166,108 @@ fun main() {
                     justifyContent(JustifyContent.SpaceBetween)
                 }
             }) {
+
                 Div {
-                    Text(if (coordinate[0] * coordinate[1] == 0) "" else "${(coordinate[0] - 1) * cols + coordinate[1]}th byte = [ row : ${coordinate[0]} | column : ${coordinate[1]} ]")
+                    Text(if (selectedCell.first < 0 && selectedCell.second < 0) "" else "${(selectedCell.first) * cols + selectedCell.second + 1}th byte = ")
+
+                    Label {
+                        Text("row : ")
+                        Text((selectedCell.first + 1).toString())
+                    }
+
+                    Label {
+                        Text(" ")
+                    }
+
+                    Label {
+                        Text("column : ")
+                        Text((selectedCell.second + 1).toString())
+                    }
                 }
 
                 Div {
                     Fieldset({
                         style {
-                            padding(0.px)
+                            display(DisplayStyle.Flex)
+                            flexDirection(FlexDirection.Row)
+                            padding(1.px)
+                            paddingLeft(2.px)
+                            paddingRight(2.px)
                         }
                     }) {
-
+                        Div({
+                            style {
+                                padding(0.px)
+                                fontWeight("bold")
+                            }
+                        }) {
+                            Text("Column")
+                        }
                         listOf(
-                            DisplayMode.BINARY,
-                            DisplayMode.INTEGER,
-                            DisplayMode.HEX,
-                            DisplayMode.ASCII
+                            16, 32, 64
+                        ).forEach { mode ->
+                            Label {
+                                Input(
+                                    type = InputType.Radio,
+                                    attrs = {
+                                        checked(mode == cols)
+                                        onClick {
+                                            cols = mode
+                                            rows = (byteArray.size - 1) / cols + 1
+
+                                            if(selectedCell.first > rows || selectedCell.second > cols){
+                                                selectedCell = Pair(0, 0)
+                                            }
+
+                                            cellData = updateCellData(byteArray, rows, cols, base)
+                                        }
+                                    }
+                                )
+                                Span {
+                                    Text(mode.toString())
+                                }
+                            }
+                        }
+                    }
+
+                }
+
+
+                Div {
+                    Fieldset({
+                        style {
+                            display(DisplayStyle.Flex)
+                            flexDirection(FlexDirection.Row)
+                            padding(1.px)
+                            paddingLeft(2.px)
+                            paddingRight(2.px)
+                        }
+                    }) {
+                        Div({
+                            style {
+                                padding(0.px)
+                                fontWeight("bold")
+                            }
+                        }) {
+                            Text("Base")
+                        }
+                        listOf(
+                            Base.BINARY,
+                            Base.OCTAL,
+                            Base.DECIMAL,
+                            Base.HEXA_DECIMAL,
+                            Base.ASCII
                         ).forEach { mode ->
 
                             Label {
                                 Input(
                                     type = InputType.Radio,
                                     attrs = {
-                                        checked(displayMode == mode)
+                                        checked(base == mode)
                                         onClick {
-                                            displayMode = mode
-                                            val string = refineToString(byteArray, displayMode)
-                                            cellData = updateCellData(string, rows, cols, displayMode)
+                                            base = mode
+                                            rows = (byteArray.size - 1) / cols + 1
+                                            cellData = updateCellData(byteArray, rows, cols, base)
                                         }
                                     }
                                 )
@@ -195,20 +288,22 @@ fun main() {
     }
 }
 
-fun refineToString(byteArray: ByteArray, displayMode: DisplayMode): String {
+fun refineToString(byteArray: ByteArray, base: Base): String {
 
-    return when (displayMode) {
-        DisplayMode.BINARY -> byteArray.toBinary()
-        DisplayMode.INTEGER -> byteArray.toInt()
-        DisplayMode.HEX -> byteArray.toHex()
-        DisplayMode.ASCII -> byteArray.toASCII()
+    return when (base) {
+        Base.BINARY -> byteArray.toBinary()
+        Base.OCTAL -> byteArray.toOctal()
+        Base.DECIMAL -> byteArray.toDecimal()
+        Base.HEXA_DECIMAL -> byteArray.toHex()
+        Base.ASCII -> byteArray.toASCII()
         else -> byteArray.toHex()
     }
 }
 
-fun updateCellData(string: String, rows: Int, cols: Int, displayMode: DisplayMode): Array<Array<String>> {
+fun updateCellData(byteArray: ByteArray, rows: Int, cols: Int, base: Base): Array<Array<String>> {
     var cellData = Array(rows) { Array(cols) { "" } }
-    val chunkSize = displayMode.chunkSize
+    val chunkSize = base.chunkSize
+    val string = refineToString(byteArray, base)
 
     for (i in 0 until rows) {
         for (j in 0 until cols) {
