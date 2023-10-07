@@ -1,3 +1,5 @@
+import CustomBorder.Companion.borderBottom
+import CustomBorder.Companion.borderRight
 import androidx.compose.runtime.Composable
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.*
@@ -19,6 +21,7 @@ class CustomComposeUI {
                 Th({
                     style {
                         textAlign("center")
+                        borderBottom(1.px, LineStyle.Solid, Color.black)
                     }
                 }) {
                     Text((i + 1).toString())
@@ -42,6 +45,7 @@ class CustomComposeUI {
                         style {
                             textAlign("center")
                             fontWeight("bold")
+                            borderRight(1.px, LineStyle.Solid, Color.black)
                         }
                     }) {
                         Text((i + 1).toString())
