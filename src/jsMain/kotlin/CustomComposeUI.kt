@@ -44,7 +44,7 @@ class CustomComposeUI {
 
         @Composable
         fun TableRows(
-            cols: Int,
+            columns: Int,
             numberOfRows: Int,
             cellData: Array<Array<String>>,
             selectedRow : Int, selectedColumn : Int,
@@ -64,7 +64,7 @@ class CustomComposeUI {
                         Text((i + 1).toString())
                     }
 
-                    repeat(cols) { j ->
+                    repeat(columns) { j ->
 
                         val isSelected = (selectedRow == i && selectedColumn == j)
 
