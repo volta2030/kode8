@@ -1,24 +1,44 @@
+import CustomBorder.Companion.borderBottom
+import CustomBorder.Companion.borderLeft
+import CustomBorder.Companion.borderRight
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.*
+
 
 class CustomComposeUI {
     companion object {
         @Composable
-        fun TableHeader(cols: Int) {
+        fun TableHeader(cols: Int, selectedColumn: Int) {
 
             Th({
                 style {
                     textAlign("center")
+                    padding(0.px)
                 }
             }) {
-                Text("┏")
+                Div({
+                    style {
+                        width(0.px)
+                        height(0.px)
+                        padding(0.px)
+                        margin(0.px)
+                        borderBottom(20.px, LineStyle.Solid, Color.rebeccapurple)
+                        borderLeft(0.px, LineStyle.Solid, Color.transparent)
+                        borderRight(25.px, LineStyle.Solid, Color.transparent)
+                    }
+                }) {
+                }
             }
 
             repeat(cols) { i ->
                 Th({
                     style {
                         textAlign("center")
+                        borderBottom(1.px, LineStyle.Solid, Color.black)
+                        backgroundColor(if(i == selectedColumn) Color.rebeccapurple else Color.transparent)
+                        color(if(i == selectedColumn) Color.lightyellow else Color.black)
                     }
                 }) {
                     Text((i + 1).toString())
@@ -28,28 +48,35 @@ class CustomComposeUI {
 
         @Composable
         fun TableRows(
-            cols: Int,
+            columns: Int,
             numberOfRows: Int,
             cellData: Array<Array<String>>,
-            selectedCell: Pair<Int, Int>,
-            setSelectedCell: (Pair<Int, Int>) -> Unit,
+            selectedRow : Int, selectedColumn : Int,
+            setSelectedCell: (Int, Int) -> Unit,
         ) {
-
             repeat(numberOfRows) { i ->
-                Tr {
+                Tr({
+                    style {
+                        textAlign("center")
+                    }
+                }) {
 
                     Td({
                         style {
+                            width(25.px)
                             textAlign("center")
                             fontWeight("bold")
+                            backgroundColor(if(i == selectedRow) Color.rebeccapurple else Color.transparent)
+                            color(if(i == selectedRow) Color.lightyellow else Color.black)
+                            borderRight(1.px, LineStyle.Solid, Color.black)
                         }
                     }) {
                         Text((i + 1).toString())
                     }
 
-                    repeat(cols) { j ->
+                    repeat(columns) { j ->
 
-                        val isSelected = (selectedCell == Pair(i, j))
+                        val isSelected = (selectedRow == i && selectedColumn == j)
 
                         Td({
                             style {
@@ -62,7 +89,7 @@ class CustomComposeUI {
 
                             onClick {
                                 if (cellData[i][j] != "") {
-                                    setSelectedCell(Pair(i, j))
+                                    setSelectedCell(i, j)
                                 }
                             }
 

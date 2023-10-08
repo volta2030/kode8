@@ -19,7 +19,7 @@ import org.w3c.files.File
 import org.w3c.files.FileReader
 import org.w3c.files.get
 
-val version = "1.5.0"
+val version = "1.6.0"
 
 fun main() {
 
@@ -27,7 +27,7 @@ fun main() {
     val copyRightText = "Copyright © 2023 SnackLab(volta2030). All Rights Reserved."
     val sourceCodeLink = "https://github.com/volta2030/kode8"
     var selectedFile: File? = null
-    var cols by mutableStateOf(64)
+    var columns by mutableStateOf(64)
     var rows by mutableStateOf(0)
     var size by mutableStateOf(0)
 
@@ -35,10 +35,12 @@ fun main() {
     var base by mutableStateOf(Base.HEXA_DECIMAL)
 
     var cellData by mutableStateOf(
-        Array(1) { Array(cols) { "" } }
+        Array(1) { Array(columns) { "" } }
     )
 
-    var selectedCell by mutableStateOf<Pair<Int, Int>>(Pair(-1,-1))
+    var selectedRow by mutableStateOf(-1)
+    var selectedColumn by mutableStateOf(-1)
+
     var byteArray by mutableStateOf(byteArrayOf())
 
     renderComposable(rootElementId = "root") {
@@ -86,10 +88,12 @@ fun main() {
                             fileReader.onload = { event ->
                                 val arrayBuffer = event.target.asDynamic().result as? ArrayBuffer
                                 if (arrayBuffer != null) {
+                                    selectedRow = -1
+                                    selectedColumn = -1
                                     byteArray = Int8Array(arrayBuffer).unsafeCast<ByteArray>()
                                     size = byteArray.size
-                                    rows = (byteArray.size - 1) / cols + 1
-                                    cellData = updateCellData(byteArray, rows, cols, base)
+                                    rows = (byteArray.size - 1) / columns + 1
+                                    cellData = updateCellData(byteArray, rows, columns, base)
                                 }
                             }
                             selectedFile?.let { fileReader.readAsArrayBuffer(it) }
@@ -119,12 +123,13 @@ fun main() {
                         border(1.px, LineStyle.Solid, Color.black)
                     }
                 }) {
-                    TableHeader(cols)
+                    TableHeader(columns, selectedColumn)
                     TableRows(
-                        cols, rows, cellData,
-                        selectedCell,
-                        { newSelectedCell ->
-                            selectedCell = newSelectedCell
+                        columns, rows, cellData,
+                        selectedRow, selectedColumn,
+                        { newSelectedRow, newSelectedColumn ->
+                            selectedRow = newSelectedRow
+                            selectedColumn = newSelectedColumn
                         },
                     )
                 }
@@ -168,11 +173,11 @@ fun main() {
             }) {
 
                 Div {
-                    Text(if (selectedCell.first < 0 && selectedCell.second < 0) "" else "${(selectedCell.first) * cols + selectedCell.second + 1}th byte = ")
+                    Text(if (selectedRow < 0 && selectedColumn < 0) "" else "${selectedRow * columns + selectedColumn + 1}th byte = ")
 
                     Label {
                         Text("row : ")
-                        Text((selectedCell.first + 1).toString())
+                        Text((selectedRow + 1).toString())
                     }
 
                     Label {
@@ -181,7 +186,7 @@ fun main() {
 
                     Label {
                         Text("column : ")
-                        Text((selectedCell.second + 1).toString())
+                        Text((selectedColumn + 1).toString())
                     }
                 }
 
@@ -210,16 +215,17 @@ fun main() {
                                 Input(
                                     type = InputType.Radio,
                                     attrs = {
-                                        checked(mode == cols)
+                                        checked(mode == columns)
                                         onClick {
-                                            cols = mode
-                                            rows = (byteArray.size - 1) / cols + 1
+                                            columns = mode
+                                            rows = (byteArray.size - 1) / columns + 1
 
-                                            if(selectedCell.first > rows || selectedCell.second > cols){
-                                                selectedCell = Pair(0, 0)
+                                            if(selectedRow > rows || selectedColumn > columns){
+                                                selectedRow = 0
+                                                selectedColumn = 0
                                             }
 
-                                            cellData = updateCellData(byteArray, rows, cols, base)
+                                            cellData = updateCellData(byteArray, rows, columns, base)
                                         }
                                     }
                                 )
@@ -266,8 +272,8 @@ fun main() {
                                         checked(base == mode)
                                         onClick {
                                             base = mode
-                                            rows = (byteArray.size - 1) / cols + 1
-                                            cellData = updateCellData(byteArray, rows, cols, base)
+                                            rows = (byteArray.size - 1) / columns + 1
+                                            cellData = updateCellData(byteArray, rows, columns, base)
                                         }
                                     }
                                 )
