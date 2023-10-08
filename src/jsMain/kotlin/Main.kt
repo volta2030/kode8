@@ -88,6 +88,8 @@ fun main() {
                             fileReader.onload = { event ->
                                 val arrayBuffer = event.target.asDynamic().result as? ArrayBuffer
                                 if (arrayBuffer != null) {
+                                    selectedRow = -1
+                                    selectedColumn = -1
                                     byteArray = Int8Array(arrayBuffer).unsafeCast<ByteArray>()
                                     size = byteArray.size
                                     rows = (byteArray.size - 1) / columns + 1
@@ -121,7 +123,7 @@ fun main() {
                         border(1.px, LineStyle.Solid, Color.black)
                     }
                 }) {
-                    TableHeader(columns)
+                    TableHeader(columns, selectedColumn)
                     TableRows(
                         columns, rows, cellData,
                         selectedRow, selectedColumn,

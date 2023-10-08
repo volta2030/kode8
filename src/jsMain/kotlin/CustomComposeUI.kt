@@ -2,13 +2,15 @@ import CustomBorder.Companion.borderBottom
 import CustomBorder.Companion.borderLeft
 import CustomBorder.Companion.borderRight
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.*
+
 
 class CustomComposeUI {
     companion object {
         @Composable
-        fun TableHeader(cols: Int) {
+        fun TableHeader(cols: Int, selectedColumn: Int) {
 
             Th({
                 style {
@@ -24,7 +26,7 @@ class CustomComposeUI {
                         margin(0.px)
                         borderBottom(20.px, LineStyle.Solid, Color.rebeccapurple)
                         borderLeft(0.px, LineStyle.Solid, Color.transparent)
-                        borderRight(20.px, LineStyle.Solid, Color.transparent)
+                        borderRight(25.px, LineStyle.Solid, Color.transparent)
                     }
                 }) {
                 }
@@ -35,6 +37,8 @@ class CustomComposeUI {
                     style {
                         textAlign("center")
                         borderBottom(1.px, LineStyle.Solid, Color.black)
+                        backgroundColor(if(i == selectedColumn) Color.rebeccapurple else Color.transparent)
+                        color(if(i == selectedColumn) Color.lightyellow else Color.black)
                     }
                 }) {
                     Text((i + 1).toString())
@@ -50,14 +54,20 @@ class CustomComposeUI {
             selectedRow : Int, selectedColumn : Int,
             setSelectedCell: (Int, Int) -> Unit,
         ) {
-
             repeat(numberOfRows) { i ->
-                Tr {
+                Tr({
+                    style {
+                        textAlign("center")
+                    }
+                }) {
 
                     Td({
                         style {
+                            width(25.px)
                             textAlign("center")
                             fontWeight("bold")
+                            backgroundColor(if(i == selectedRow) Color.rebeccapurple else Color.transparent)
+                            color(if(i == selectedRow) Color.lightyellow else Color.black)
                             borderRight(1.px, LineStyle.Solid, Color.black)
                         }
                     }) {
