@@ -38,7 +38,9 @@ fun main() {
         Array(1) { Array(cols) { "" } }
     )
 
-    var selectedCell by mutableStateOf<Pair<Int, Int>>(Pair(-1,-1))
+    var selectedRow by mutableStateOf(-1)
+    var selectedColumn by mutableStateOf(-1)
+
     var byteArray by mutableStateOf(byteArrayOf())
 
     renderComposable(rootElementId = "root") {
@@ -122,9 +124,10 @@ fun main() {
                     TableHeader(cols)
                     TableRows(
                         cols, rows, cellData,
-                        selectedCell,
-                        { newSelectedCell ->
-                            selectedCell = newSelectedCell
+                        selectedRow, selectedColumn,
+                        { newSelectedRow, newSelectedColumn ->
+                            selectedRow = newSelectedRow
+                            selectedColumn = newSelectedColumn
                         },
                     )
                 }
@@ -168,11 +171,11 @@ fun main() {
             }) {
 
                 Div {
-                    Text(if (selectedCell.first < 0 && selectedCell.second < 0) "" else "${(selectedCell.first) * cols + selectedCell.second + 1}th byte = ")
+                    Text(if (selectedRow < 0 && selectedColumn < 0) "" else "${selectedRow * cols + selectedColumn + 1}th byte = ")
 
                     Label {
                         Text("row : ")
-                        Text((selectedCell.first + 1).toString())
+                        Text((selectedRow + 1).toString())
                     }
 
                     Label {
@@ -181,7 +184,7 @@ fun main() {
 
                     Label {
                         Text("column : ")
-                        Text((selectedCell.second + 1).toString())
+                        Text((selectedColumn + 1).toString())
                     }
                 }
 
@@ -215,8 +218,9 @@ fun main() {
                                             cols = mode
                                             rows = (byteArray.size - 1) / cols + 1
 
-                                            if(selectedCell.first > rows || selectedCell.second > cols){
-                                                selectedCell = Pair(0, 0)
+                                            if(selectedRow > rows || selectedColumn > cols){
+                                                selectedRow = 0
+                                                selectedColumn = 0
                                             }
 
                                             cellData = updateCellData(byteArray, rows, cols, base)

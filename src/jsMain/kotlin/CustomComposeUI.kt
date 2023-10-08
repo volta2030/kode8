@@ -47,8 +47,8 @@ class CustomComposeUI {
             cols: Int,
             numberOfRows: Int,
             cellData: Array<Array<String>>,
-            selectedCell: Pair<Int, Int>,
-            setSelectedCell: (Pair<Int, Int>) -> Unit,
+            selectedRow : Int, selectedColumn : Int,
+            setSelectedCell: (Int, Int) -> Unit,
         ) {
 
             repeat(numberOfRows) { i ->
@@ -66,7 +66,7 @@ class CustomComposeUI {
 
                     repeat(cols) { j ->
 
-                        val isSelected = (selectedCell == Pair(i, j))
+                        val isSelected = (selectedRow == i && selectedColumn == j)
 
                         Td({
                             style {
@@ -79,7 +79,7 @@ class CustomComposeUI {
 
                             onClick {
                                 if (cellData[i][j] != "") {
-                                    setSelectedCell(Pair(i, j))
+                                    setSelectedCell(i, j)
                                 }
                             }
 
