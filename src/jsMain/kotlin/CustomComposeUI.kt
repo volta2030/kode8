@@ -1,4 +1,5 @@
 import CustomBorder.Companion.borderBottom
+import CustomBorder.Companion.borderLeft
 import CustomBorder.Companion.borderRight
 import androidx.compose.runtime.Composable
 import org.jetbrains.compose.web.css.*
@@ -12,9 +13,21 @@ class CustomComposeUI {
             Th({
                 style {
                     textAlign("center")
+                    padding(0.px)
                 }
             }) {
-                Text("┏")
+                Div({
+                    style {
+                        width(0.px)
+                        height(0.px)
+                        padding(0.px)
+                        margin(0.px)
+                        borderBottom(20.px, LineStyle.Solid, Color.rebeccapurple)
+                        borderLeft(0.px, LineStyle.Solid, Color.transparent)
+                        borderRight(20.px, LineStyle.Solid, Color.transparent)
+                    }
+                }) {
+                }
             }
 
             repeat(cols) { i ->
