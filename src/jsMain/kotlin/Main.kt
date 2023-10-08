@@ -27,7 +27,7 @@ fun main() {
     val copyRightText = "Copyright © 2023 SnackLab(volta2030). All Rights Reserved."
     val sourceCodeLink = "https://github.com/volta2030/kode8"
     var selectedFile: File? = null
-    var cols by mutableStateOf(64)
+    var columns by mutableStateOf(64)
     var rows by mutableStateOf(0)
     var size by mutableStateOf(0)
 
@@ -35,7 +35,7 @@ fun main() {
     var base by mutableStateOf(Base.HEXA_DECIMAL)
 
     var cellData by mutableStateOf(
-        Array(1) { Array(cols) { "" } }
+        Array(1) { Array(columns) { "" } }
     )
 
     var selectedRow by mutableStateOf(-1)
@@ -90,8 +90,8 @@ fun main() {
                                 if (arrayBuffer != null) {
                                     byteArray = Int8Array(arrayBuffer).unsafeCast<ByteArray>()
                                     size = byteArray.size
-                                    rows = (byteArray.size - 1) / cols + 1
-                                    cellData = updateCellData(byteArray, rows, cols, base)
+                                    rows = (byteArray.size - 1) / columns + 1
+                                    cellData = updateCellData(byteArray, rows, columns, base)
                                 }
                             }
                             selectedFile?.let { fileReader.readAsArrayBuffer(it) }
@@ -121,9 +121,9 @@ fun main() {
                         border(1.px, LineStyle.Solid, Color.black)
                     }
                 }) {
-                    TableHeader(cols)
+                    TableHeader(columns)
                     TableRows(
-                        cols, rows, cellData,
+                        columns, rows, cellData,
                         selectedRow, selectedColumn,
                         { newSelectedRow, newSelectedColumn ->
                             selectedRow = newSelectedRow
@@ -171,7 +171,7 @@ fun main() {
             }) {
 
                 Div {
-                    Text(if (selectedRow < 0 && selectedColumn < 0) "" else "${selectedRow * cols + selectedColumn + 1}th byte = ")
+                    Text(if (selectedRow < 0 && selectedColumn < 0) "" else "${selectedRow * columns + selectedColumn + 1}th byte = ")
 
                     Label {
                         Text("row : ")
@@ -213,17 +213,17 @@ fun main() {
                                 Input(
                                     type = InputType.Radio,
                                     attrs = {
-                                        checked(mode == cols)
+                                        checked(mode == columns)
                                         onClick {
-                                            cols = mode
-                                            rows = (byteArray.size - 1) / cols + 1
+                                            columns = mode
+                                            rows = (byteArray.size - 1) / columns + 1
 
-                                            if(selectedRow > rows || selectedColumn > cols){
+                                            if(selectedRow > rows || selectedColumn > columns){
                                                 selectedRow = 0
                                                 selectedColumn = 0
                                             }
 
-                                            cellData = updateCellData(byteArray, rows, cols, base)
+                                            cellData = updateCellData(byteArray, rows, columns, base)
                                         }
                                     }
                                 )
@@ -270,8 +270,8 @@ fun main() {
                                         checked(base == mode)
                                         onClick {
                                             base = mode
-                                            rows = (byteArray.size - 1) / cols + 1
-                                            cellData = updateCellData(byteArray, rows, cols, base)
+                                            rows = (byteArray.size - 1) / columns + 1
+                                            cellData = updateCellData(byteArray, rows, columns, base)
                                         }
                                     }
                                 )
