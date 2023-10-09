@@ -44,6 +44,7 @@ fun main() {
     var byteArray by mutableStateOf(byteArrayOf())
 
     renderComposable(rootElementId = "root") {
+
         Div({
             style {
                 display(DisplayStyle.Flex)
@@ -101,6 +102,13 @@ fun main() {
                     }
                 )
 
+                Div({
+                    style {
+                        backgroundColor(Color.transparent)
+                    }
+                }){
+                    Img("images/copy.png", "img")
+                }
             }
 
             Main({
@@ -116,7 +124,7 @@ fun main() {
 
                 }
             }) {
-
+                
                 Table({
                     style {
                         fontSize(15.px)
