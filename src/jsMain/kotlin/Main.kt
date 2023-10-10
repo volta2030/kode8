@@ -1,5 +1,6 @@
 import CustomComposeUI.Companion.TableHeader
 import CustomComposeUI.Companion.TableRows
+import CustomComposeUI.Companion.Toast
 import Utility.Companion.toASCII
 import Utility.Companion.toBinary
 import Utility.Companion.toDecimal
@@ -7,16 +8,14 @@ import Utility.Companion.toHex
 import Utility.Companion.toOctal
 import androidx.compose.runtime.*
 import kotlinx.browser.document
+import kotlinx.browser.window
 import org.jetbrains.compose.web.attributes.InputType
-import org.jetbrains.compose.web.attributes.max
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.*
 import org.jetbrains.compose.web.renderComposable
 import org.khronos.webgl.ArrayBuffer
 import org.khronos.webgl.Int8Array
 import org.w3c.dom.HTMLInputElement
-import org.w3c.dom.clipboard.Clipboard
-import org.w3c.dom.clipboard.ClipboardEventInit
 import org.w3c.files.File
 import org.w3c.files.FileReader
 import org.w3c.files.get
@@ -115,6 +114,10 @@ fun main() {
                         onMouseOut {
                             document.body!!.style.cursor = "default"
                         }
+                        onClick{
+                           window.navigator.clipboard.writeText(refineToString(byteArray, base))
+                           document.body!!.style.cursor = "default"
+                        }
                     }
                 )
             }
@@ -135,6 +138,7 @@ fun main() {
             }) {
 
                 Table({
+                    id("table")
                     style {
                         fontSize(15.px)
                         border(1.px, LineStyle.Solid, Color.black)
