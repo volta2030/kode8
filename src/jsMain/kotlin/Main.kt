@@ -7,8 +7,8 @@ import Utility.Companion.toHex
 import Utility.Companion.toOctal
 import androidx.compose.runtime.*
 import kotlinx.browser.document
+import kotlinx.browser.window
 import org.jetbrains.compose.web.attributes.InputType
-import org.jetbrains.compose.web.attributes.max
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.*
 import org.jetbrains.compose.web.renderComposable
@@ -19,7 +19,7 @@ import org.w3c.files.File
 import org.w3c.files.FileReader
 import org.w3c.files.get
 
-val version = "1.6.0"
+val version = "1.7.0"
 
 fun main() {
 
@@ -44,6 +44,7 @@ fun main() {
     var byteArray by mutableStateOf(byteArrayOf())
 
     renderComposable(rootElementId = "root") {
+
         Div({
             style {
                 display(DisplayStyle.Flex)
@@ -78,7 +79,6 @@ fun main() {
 
                 Input(
                     type = InputType.File,
-
                     attrs = {
                         onChange { e ->
                             val target = e.target as? HTMLInputElement
@@ -100,8 +100,8 @@ fun main() {
                         }
                     }
                 )
-
             }
+
 
             Main({
                 style {
@@ -117,7 +117,34 @@ fun main() {
                 }
             }) {
 
+                Img("images/copy.png", "img",
+                    attrs = {
+                        style {
+                            maxWidth(20.px)
+                            maxHeight(20.px)
+                            padding(3.px)
+                        }
+                        onMouseOver {
+
+                            if (selectedFile != null) {
+                                document.body!!.style.cursor = "pointer"
+                            }
+                        }
+                        onMouseOut {
+                            document.body!!.style.cursor = "default"
+                        }
+                        onClick {
+                            if (selectedFile != null) {
+                                window.navigator.clipboard.writeText(refineToString(byteArray, base))
+                                document.body!!.style.cursor = "default"
+                                window.alert("Copied!")
+                            }
+                        }
+                    }
+                )
+
                 Table({
+                    id("table")
                     style {
                         fontSize(15.px)
                         border(1.px, LineStyle.Solid, Color.black)
@@ -220,7 +247,7 @@ fun main() {
                                             columns = mode
                                             rows = (byteArray.size - 1) / columns + 1
 
-                                            if(selectedRow > rows || selectedColumn > columns){
+                                            if (selectedRow > rows || selectedColumn > columns) {
                                                 selectedRow = 0
                                                 selectedColumn = 0
                                             }
