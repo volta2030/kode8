@@ -1,6 +1,5 @@
 import CustomComposeUI.Companion.TableHeader
 import CustomComposeUI.Companion.TableRows
-import CustomComposeUI.Companion.Toast
 import Utility.Companion.toASCII
 import Utility.Companion.toBinary
 import Utility.Companion.toDecimal
@@ -101,25 +100,6 @@ fun main() {
                         }
                     }
                 )
-
-                Img("images/copy.png", "img",
-                    attrs = {
-                        style {
-                            maxWidth(16.px)
-                            maxHeight(16.px)
-                        }
-                        onMouseOver {
-                            document.body!!.style.cursor = "pointer"
-                        }
-                        onMouseOut {
-                            document.body!!.style.cursor = "default"
-                        }
-                        onClick{
-                           window.navigator.clipboard.writeText(refineToString(byteArray, base))
-                           document.body!!.style.cursor = "default"
-                        }
-                    }
-                )
             }
 
 
@@ -136,6 +116,32 @@ fun main() {
 
                 }
             }) {
+
+                Img("images/copy.png", "img",
+                    attrs = {
+                        style {
+                            maxWidth(20.px)
+                            maxHeight(20.px)
+                            padding(3.px)
+                        }
+                        onMouseOver {
+
+                            if (selectedFile != null) {
+                                document.body!!.style.cursor = "pointer"
+                            }
+                        }
+                        onMouseOut {
+                            document.body!!.style.cursor = "default"
+                        }
+                        onClick {
+                            if (selectedFile != null) {
+                                window.navigator.clipboard.writeText(refineToString(byteArray, base))
+                                document.body!!.style.cursor = "default"
+                                window.alert("Copied!")
+                            }
+                        }
+                    }
+                )
 
                 Table({
                     id("table")
