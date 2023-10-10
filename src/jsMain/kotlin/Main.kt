@@ -15,6 +15,8 @@ import org.jetbrains.compose.web.renderComposable
 import org.khronos.webgl.ArrayBuffer
 import org.khronos.webgl.Int8Array
 import org.w3c.dom.HTMLInputElement
+import org.w3c.dom.clipboard.Clipboard
+import org.w3c.dom.clipboard.ClipboardEventInit
 import org.w3c.files.File
 import org.w3c.files.FileReader
 import org.w3c.files.get
@@ -79,7 +81,6 @@ fun main() {
 
                 Input(
                     type = InputType.File,
-
                     attrs = {
                         onChange { e ->
                             val target = e.target as? HTMLInputElement
@@ -102,14 +103,22 @@ fun main() {
                     }
                 )
 
-                Div({
-                    style {
-                        backgroundColor(Color.transparent)
+                Img("images/copy.png", "img",
+                    attrs = {
+                        style {
+                            maxWidth(16.px)
+                            maxHeight(16.px)
+                        }
+                        onMouseOver {
+                            document.body!!.style.cursor = "pointer"
+                        }
+                        onMouseOut {
+                            document.body!!.style.cursor = "default"
+                        }
                     }
-                }){
-                    Img("images/copy.png", "img")
-                }
+                )
             }
+
 
             Main({
                 style {
@@ -124,7 +133,7 @@ fun main() {
 
                 }
             }) {
-                
+
                 Table({
                     style {
                         fontSize(15.px)
@@ -228,7 +237,7 @@ fun main() {
                                             columns = mode
                                             rows = (byteArray.size - 1) / columns + 1
 
-                                            if(selectedRow > rows || selectedColumn > columns){
+                                            if (selectedRow > rows || selectedColumn > columns) {
                                                 selectedRow = 0
                                                 selectedColumn = 0
                                             }
