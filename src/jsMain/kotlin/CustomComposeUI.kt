@@ -2,7 +2,6 @@ import CustomBorder.Companion.borderBottom
 import CustomBorder.Companion.borderLeft
 import CustomBorder.Companion.borderRight
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.*
 
@@ -49,12 +48,20 @@ class CustomComposeUI {
         @Composable
         fun TableRows(
             columns: Int,
-            numberOfRows: Int,
-            cellData: Array<Array<String>>,
+            rowsPerPage: Int,
+            pageIndex : Int,
+            trimmedCellData: Array<Array<String>>,
             selectedRow : Int, selectedColumn : Int,
             setSelectedCell: (Int, Int) -> Unit,
         ) {
-            repeat(numberOfRows) { i ->
+
+            var repeatTime = rowsPerPage
+
+            if(trimmedCellData.size < rowsPerPage){
+                repeatTime = trimmedCellData.size
+            }
+
+            repeat(repeatTime) { i ->
                 Tr({
                     style {
                         textAlign("center")
@@ -71,7 +78,7 @@ class CustomComposeUI {
                             borderRight(1.px, LineStyle.Solid, Color.black)
                         }
                     }) {
-                        Text((i + 1).toString())
+                        Text(((pageIndex * rowsPerPage) + (i + 1)).toString())
                     }
 
                     repeat(columns) { j ->
@@ -88,13 +95,13 @@ class CustomComposeUI {
                             }
 
                             onClick {
-                                if (cellData[i][j] != "") {
+                                if (trimmedCellData[i][j] != "") {
                                     setSelectedCell(i, j)
                                 }
                             }
 
                         }) {
-                            Text(cellData[i][j])
+                            Text(trimmedCellData[i][j])
                         }
                     }
                 }

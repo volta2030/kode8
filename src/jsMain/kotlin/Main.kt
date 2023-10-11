@@ -1,10 +1,10 @@
 import CustomComposeUI.Companion.TableHeader
 import CustomComposeUI.Companion.TableRows
-import Utility.Companion.toASCII
-import Utility.Companion.toBinary
-import Utility.Companion.toDecimal
-import Utility.Companion.toHex
-import Utility.Companion.toOctal
+import util.Converter.Companion.toASCII
+import util.Converter.Companion.toBinary
+import util.Converter.Companion.toDecimal
+import util.Converter.Companion.toHex
+import util.Converter.Companion.toOctal
 import androidx.compose.runtime.*
 import kotlinx.browser.document
 import kotlinx.browser.window
@@ -18,6 +18,9 @@ import org.w3c.dom.HTMLInputElement
 import org.w3c.files.File
 import org.w3c.files.FileReader
 import org.w3c.files.get
+import util.Data.Companion.refineToString
+import util.Data.Companion.updateCellData
+import util.Data.Companion.updateTrimmedCellData
 
 val version = "1.7.0"
 
@@ -31,11 +34,18 @@ fun main() {
     var rows by mutableStateOf(0)
     var size by mutableStateOf(0)
 
+    var pageIndex by mutableStateOf(0)
+    var rowsPerPage by mutableStateOf(100)
+
     //radio buttons
     var base by mutableStateOf(Base.HEXA_DECIMAL)
 
     var cellData by mutableStateOf(
         Array(1) { Array(columns) { "" } }
+    )
+
+    var trimmedCellData by mutableStateOf(
+        Array(1) { Array(1) { "" } }
     )
 
     var selectedRow by mutableStateOf(-1)
@@ -76,7 +86,6 @@ fun main() {
                     Text("kode8 - Byte Code Viewer")
                 }
 
-
                 Input(
                     type = InputType.File,
                     attrs = {
@@ -94,6 +103,7 @@ fun main() {
                                     size = byteArray.size
                                     rows = (byteArray.size - 1) / columns + 1
                                     cellData = updateCellData(byteArray, rows, columns, base)
+                                    trimmedCellData = updateTrimmedCellData(cellData, rows, rowsPerPage, pageIndex)
                                 }
                             }
                             selectedFile?.let { fileReader.readAsArrayBuffer(it) }
@@ -152,7 +162,7 @@ fun main() {
                 }) {
                     TableHeader(columns, selectedColumn)
                     TableRows(
-                        columns, rows, cellData,
+                        columns, if(rows < rowsPerPage) rows else rowsPerPage, pageIndex, trimmedCellData,
                         selectedRow, selectedColumn,
                         { newSelectedRow, newSelectedColumn ->
                             selectedRow = newSelectedRow
@@ -160,6 +170,28 @@ fun main() {
                         },
                     )
                 }
+
+                Div({
+                    style {
+                        display(DisplayStyle.Flex)
+                        flexDirection(FlexDirection.Row)
+                        justifyContent(JustifyContent.Center)
+                        padding(5.px)
+                    }
+                }) {
+                    repeat((rows / rowsPerPage) + 1) { i ->
+                        Button({
+                            onClick {
+                                pageIndex = i
+                                trimmedCellData = updateTrimmedCellData(cellData, rows, rowsPerPage, pageIndex)
+                            }
+                        }) {
+                            Text((i + 1).toString())
+                        }
+                        Text(" ")
+                    }
+                }
+
                 Div({
                     style {
                         display(DisplayStyle.Flex)
@@ -193,158 +225,139 @@ fun main() {
                     padding(5.px)
                     color(Color.white)
                     fontWeight(3)
-                    display(DisplayStyle.Flex)
-                    flexDirection(FlexDirection.Row)
-                    justifyContent(JustifyContent.SpaceBetween)
+
                 }
             }) {
 
-                Div {
-                    Text(if (selectedRow < 0 && selectedColumn < 0) "" else "${selectedRow * columns + selectedColumn + 1}th byte = ")
-
-                    Label {
-                        Text("row : ")
-                        Text((selectedRow + 1).toString())
+                Div({
+                    style {
+                        display(DisplayStyle.Flex)
+                        flexDirection(FlexDirection.Row)
+                        justifyContent(JustifyContent.SpaceBetween)
                     }
+                }){
+                    Div {
+                        Text(if (selectedRow < 0 && selectedColumn < 0) "" else "${(pageIndex * rowsPerPage + selectedRow) * columns + selectedColumn + 1}th byte = ")
 
-                    Label {
-                        Text(" ")
-                    }
-
-                    Label {
-                        Text("column : ")
-                        Text((selectedColumn + 1).toString())
-                    }
-                }
-
-                Div {
-                    Fieldset({
-                        style {
-                            display(DisplayStyle.Flex)
-                            flexDirection(FlexDirection.Row)
-                            padding(1.px)
-                            paddingLeft(2.px)
-                            paddingRight(2.px)
+                        Label {
+                            Text("row : ")
+                            Text((pageIndex * rowsPerPage + (selectedRow + 1)).toString())
                         }
-                    }) {
-                        Div({
+
+                        Label {
+                            Text(" ")
+                        }
+
+                        Label {
+                            Text("column : ")
+                            Text((selectedColumn + 1).toString())
+                        }
+                    }
+
+                    Div {
+                        Fieldset({
                             style {
-                                padding(0.px)
-                                fontWeight("bold")
+                                display(DisplayStyle.Flex)
+                                flexDirection(FlexDirection.Row)
+                                padding(1.px)
+                                paddingLeft(2.px)
+                                paddingRight(2.px)
                             }
                         }) {
-                            Text("Column")
-                        }
-                        listOf(
-                            16, 32, 64
-                        ).forEach { mode ->
-                            Label {
-                                Input(
-                                    type = InputType.Radio,
-                                    attrs = {
-                                        checked(mode == columns)
-                                        onClick {
-                                            columns = mode
-                                            rows = (byteArray.size - 1) / columns + 1
+                            Div({
+                                style {
+                                    padding(0.px)
+                                    fontWeight("bold")
+                                }
+                            }) {
+                                Text("Column")
+                            }
+                            listOf(
+                                16, 32, 64
+                            ).forEach { mode ->
+                                Label {
+                                    Input(
+                                        type = InputType.Radio,
+                                        attrs = {
+                                            checked(mode == columns)
+                                            onClick {
+                                                columns = mode
+                                                rows = (byteArray.size - 1) / columns + 1
 
-                                            if (selectedRow > rows || selectedColumn > columns) {
-                                                selectedRow = 0
-                                                selectedColumn = 0
+                                                if (selectedRow > rows || selectedColumn > columns) {
+                                                    selectedRow = 0
+                                                    selectedColumn = 0
+                                                }
+
+                                                cellData = updateCellData(byteArray, rows, columns, base)
+                                                trimmedCellData = updateTrimmedCellData(cellData, rows, rowsPerPage, pageIndex)
                                             }
-
-                                            cellData = updateCellData(byteArray, rows, columns, base)
                                         }
+                                    )
+                                    Span {
+                                        Text(mode.toString())
                                     }
-                                )
-                                Span {
-                                    Text(mode.toString())
                                 }
                             }
                         }
+
                     }
 
-                }
 
-
-                Div {
-                    Fieldset({
-                        style {
-                            display(DisplayStyle.Flex)
-                            flexDirection(FlexDirection.Row)
-                            padding(1.px)
-                            paddingLeft(2.px)
-                            paddingRight(2.px)
-                        }
-                    }) {
-                        Div({
+                    Div {
+                        Fieldset({
                             style {
-                                padding(0.px)
-                                fontWeight("bold")
+                                display(DisplayStyle.Flex)
+                                flexDirection(FlexDirection.Row)
+                                padding(1.px)
+                                paddingLeft(2.px)
+                                paddingRight(2.px)
                             }
                         }) {
-                            Text("Base")
-                        }
-                        listOf(
-                            Base.BINARY,
-                            Base.OCTAL,
-                            Base.DECIMAL,
-                            Base.HEXA_DECIMAL,
-                            Base.ASCII
-                        ).forEach { mode ->
+                            Div({
+                                style {
+                                    padding(0.px)
+                                    fontWeight("bold")
+                                }
+                            }) {
+                                Text("Base")
+                            }
+                            listOf(
+                                Base.BINARY,
+                                Base.OCTAL,
+                                Base.DECIMAL,
+                                Base.HEXA_DECIMAL,
+                                Base.ASCII
+                            ).forEach { mode ->
 
-                            Label {
-                                Input(
-                                    type = InputType.Radio,
-                                    attrs = {
-                                        checked(base == mode)
-                                        onClick {
-                                            base = mode
-                                            rows = (byteArray.size - 1) / columns + 1
-                                            cellData = updateCellData(byteArray, rows, columns, base)
+                                Label {
+                                    Input(
+                                        type = InputType.Radio,
+                                        attrs = {
+                                            checked(base == mode)
+                                            onClick {
+                                                base = mode
+                                                rows = (byteArray.size - 1) / columns + 1
+                                                cellData = updateCellData(byteArray, rows, columns, base)
+                                                trimmedCellData = updateTrimmedCellData(cellData, rows, rowsPerPage, pageIndex)
+                                            }
                                         }
+                                    )
+                                    Span {
+                                        Text(mode.label)
                                     }
-                                )
-                                Span {
-                                    Text(mode.label)
                                 }
                             }
                         }
                     }
+
+                    Div {
+                        Text("Total $size Bytes")
+                    }
                 }
 
-                Div {
-                    Text("Total $size Bytes")
-                }
 
             }
         }
     }
-}
-
-fun refineToString(byteArray: ByteArray, base: Base): String {
-
-    return when (base) {
-        Base.BINARY -> byteArray.toBinary()
-        Base.OCTAL -> byteArray.toOctal()
-        Base.DECIMAL -> byteArray.toDecimal()
-        Base.HEXA_DECIMAL -> byteArray.toHex()
-        Base.ASCII -> byteArray.toASCII()
-        else -> byteArray.toHex()
-    }
-}
-
-fun updateCellData(byteArray: ByteArray, rows: Int, cols: Int, base: Base): Array<Array<String>> {
-    var cellData = Array(rows) { Array(cols) { "" } }
-    val chunkSize = base.chunkSize
-    val string = refineToString(byteArray, base)
-
-    for (i in 0 until rows) {
-        for (j in 0 until cols) {
-            val startIndex = i * cols * chunkSize + j * chunkSize
-            val endIndex = startIndex + chunkSize
-            cellData[i][j] = string.substring(startIndex, endIndex)
-        }
-    }
-
-    return cellData
 }
