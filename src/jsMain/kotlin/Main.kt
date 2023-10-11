@@ -23,7 +23,7 @@ import util.Data.Companion.refineToString
 import util.Data.Companion.updateCellData
 import util.Data.Companion.updateTrimmedCellData
 
-val version = "1.7.0"
+const val version = "1.8.0"
 
 fun main() {
 
@@ -197,7 +197,7 @@ fun main() {
                         display(DisplayStyle.Flex)
                         flexDirection(FlexDirection.Row)
                         justifyContent(JustifyContent.Center)
-                        padding(5.px)
+                        paddingBottom(5.px)
                     }
                 }) {
 
