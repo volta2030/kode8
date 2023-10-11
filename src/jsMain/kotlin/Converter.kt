@@ -1,4 +1,4 @@
-class Utility {
+class Converter {
     companion object {
 
         fun ByteArray.toBinary(): String {
