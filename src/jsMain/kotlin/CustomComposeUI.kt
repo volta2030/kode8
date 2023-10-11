@@ -107,5 +107,31 @@ class CustomComposeUI {
                 }
             }
         }
+
+        @Composable
+        fun FooterText(versionText : String , copyRightText : String, sourceCodeLink : String){
+            Div({
+                style {
+                    display(DisplayStyle.Flex)
+                    flexDirection(FlexDirection.Row)
+                    justifyContent(JustifyContent.Center)
+                    color(Color.gray)
+                    textAlign("center")
+                }
+            }) {
+                Text("$versionText | $copyRightText |")
+                Div({
+                    style {
+                        width(5.px)
+                    }
+
+                }) {
+                }
+                A(href = sourceCodeLink) {
+                    Text("Source Code")
+                }
+            }
+        }
+
     }
 }

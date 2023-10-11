@@ -1,3 +1,4 @@
+import CustomComposeUI.Companion.FooterText
 import CustomComposeUI.Companion.TableHeader
 import CustomComposeUI.Companion.TableRows
 import util.Converter.Companion.toASCII
@@ -117,7 +118,7 @@ fun main() {
                 style {
                     paddingLeft(5.px)
                     paddingTop(40.px)
-                    paddingBottom(40.px)
+                    paddingBottom(80.px)
                     paddingRight(5.px)
 
                     display(DisplayStyle.Flex)
@@ -171,48 +172,8 @@ fun main() {
                     )
                 }
 
-                Div({
-                    style {
-                        display(DisplayStyle.Flex)
-                        flexDirection(FlexDirection.Row)
-                        justifyContent(JustifyContent.Center)
-                        padding(5.px)
-                    }
-                }) {
-                    repeat((rows / rowsPerPage) + 1) { i ->
-                        Button({
-                            onClick {
-                                pageIndex = i
-                                trimmedCellData = updateTrimmedCellData(cellData, rows, rowsPerPage, pageIndex)
-                            }
-                        }) {
-                            Text((i + 1).toString())
-                        }
-                        Text(" ")
-                    }
-                }
+                FooterText(versionText, copyRightText, sourceCodeLink)
 
-                Div({
-                    style {
-                        display(DisplayStyle.Flex)
-                        flexDirection(FlexDirection.Row)
-                        justifyContent(JustifyContent.Center)
-                        color(Color.gray)
-                        textAlign("center")
-                    }
-                }) {
-                    Text("$versionText | $copyRightText |")
-                    Div({
-                        style {
-                            width(5.px)
-                        }
-
-                    }) {
-                    }
-                    A(href = sourceCodeLink) {
-                        Text("Source Code")
-                    }
-                }
             }
 
             Footer({
@@ -225,9 +186,45 @@ fun main() {
                     padding(5.px)
                     color(Color.white)
                     fontWeight(3)
-
+                    display(DisplayStyle.Flex)
+                    flexDirection(FlexDirection.Column)
+                    justifyContent(JustifyContent.SpaceBetween)
                 }
             }) {
+
+                Div({
+                    style {
+                        display(DisplayStyle.Flex)
+                        flexDirection(FlexDirection.Row)
+                        justifyContent(JustifyContent.Center)
+                        padding(5.px)
+                    }
+                }) {
+
+                    Div({
+                        style {
+                            marginRight(5.px)
+                        }
+                    }){ Text("prev") }
+
+                    repeat((rows / rowsPerPage) + 1) { i ->
+                        Button({
+                            onClick {
+                                pageIndex = i
+                                trimmedCellData = updateTrimmedCellData(cellData, rows, rowsPerPage, pageIndex)
+                            }
+                        }) {
+                            Text((i + 1).toString())
+                        }
+                        Text(" ")
+                    }
+
+                    Div({
+                        style {
+                            marginLeft(5.px)
+                        }
+                    }){ Text("next") }
+                }
 
                 Div({
                     style {
