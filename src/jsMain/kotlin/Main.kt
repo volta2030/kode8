@@ -200,7 +200,6 @@ fun main() {
                         paddingBottom(5.px)
                     }
                 }) {
-
                     Div({
                         style {
                             marginRight(5.px)
@@ -224,12 +223,24 @@ fun main() {
 
                     repeat((rows / rowsPerPage) + 1) { i ->
                         Button({
+
+                            style {
+                                backgroundColor(if(pageIndex == i) Color.rebeccapurple else Color.lightgray)
+                            }
+
                             onClick {
                                 pageIndex = i
                                 trimmedCellData = updateTrimmedCellData(cellData, rows, rowsPerPage, pageIndex)
                             }
                         }) {
-                            Text((i + 1).toString())
+                            Div({
+                                style {
+                                    color(if(pageIndex == i) Color.white else Color.black)
+                                }
+                            }) {
+                                Text((i + 1).toString())
+                            }
+
                         }
                         Text(" ")
                     }
