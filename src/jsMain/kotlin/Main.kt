@@ -10,6 +10,8 @@ import androidx.compose.runtime.*
 import kotlinx.browser.document
 import kotlinx.browser.window
 import org.jetbrains.compose.web.attributes.InputType
+import org.jetbrains.compose.web.attributes.max
+import org.jetbrains.compose.web.attributes.min
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.*
 import org.jetbrains.compose.web.renderComposable
@@ -36,6 +38,7 @@ fun main() {
     var size by mutableStateOf(0)
 
     var pageIndex by mutableStateOf(0)
+    var goToPageIndex by mutableStateOf(1)
     var rowsPerPage by mutableStateOf(100)
 
     //radio buttons
@@ -105,6 +108,8 @@ fun main() {
                                     rows = (byteArray.size - 1) / columns + 1
                                     cellData = updateCellData(byteArray, rows, columns, base)
                                     trimmedCellData = updateTrimmedCellData(cellData, rows, rowsPerPage, pageIndex)
+                                    pageIndex = 0
+                                    goToPageIndex = 1
                                 }
                             }
                             selectedFile?.let { fileReader.readAsArrayBuffer(it) }
@@ -222,27 +227,33 @@ fun main() {
                     }
 
                     repeat((rows / rowsPerPage) + 1) { i ->
-                        Button({
 
+                        Div({
                             style {
-                                backgroundColor(if(pageIndex == i) Color.rebeccapurple else Color.lightgray)
-                            }
-
-                            onClick {
-                                pageIndex = i
-                                trimmedCellData = updateTrimmedCellData(cellData, rows, rowsPerPage, pageIndex)
+                                paddingLeft(1.px)
+                                paddingRight(1.px)
                             }
                         }) {
-                            Div({
+                            Button({
                                 style {
-                                    color(if(pageIndex == i) Color.white else Color.black)
+                                    backgroundColor(if(pageIndex == i) Color.rebeccapurple else Color.lightgray)
+                                }
+
+                                onClick {
+                                    pageIndex = i
+                                    trimmedCellData = updateTrimmedCellData(cellData, rows, rowsPerPage, pageIndex)
                                 }
                             }) {
-                                Text((i + 1).toString())
-                            }
+                                Div({
+                                    style {
+                                        color(if(pageIndex == i) Color.white else Color.black)
+                                    }
+                                }) {
+                                    Text((i + 1).toString())
+                                }
 
+                            }
                         }
-                        Text(" ")
                     }
 
                     Div({
@@ -265,6 +276,34 @@ fun main() {
 
                     }){ Text("next") }
                 }
+
+                Div({
+                    style {
+                        display(DisplayStyle.Flex)
+                        flexDirection(FlexDirection.Row)
+                        justifyContent(JustifyContent.Center)
+                        paddingBottom(5.px)
+                    }
+                }){
+                    NumberInput {
+                        defaultValue(goToPageIndex)
+                        min("1")
+                        max(((rows / rowsPerPage) + 1).toString())
+                        onChange { e->
+                            goToPageIndex = e.value as Int
+                        }
+                    }
+
+                    Button({
+                        onClick {
+                           pageIndex = goToPageIndex - 1
+                           trimmedCellData = updateTrimmedCellData(cellData, rows, rowsPerPage, pageIndex)
+                        }
+                    }) {
+                        Text("go")
+                    }
+                }
+
 
                 Div({
                     style {
