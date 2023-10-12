@@ -205,7 +205,22 @@ fun main() {
                         style {
                             marginRight(5.px)
                         }
-                    }){ Text("prev") }
+
+                        onMouseOver {
+                          document.body!!.style.cursor = "pointer"
+                        }
+                        onMouseOut {
+                            document.body!!.style.cursor = "default"
+                        }
+                        onClick {
+                            if(pageIndex > 0){
+                                pageIndex--
+                                trimmedCellData = updateTrimmedCellData(cellData, rows, rowsPerPage, pageIndex)
+                            }
+                        }
+
+                    }){ Text("prev")
+                    }
 
                     repeat((rows / rowsPerPage) + 1) { i ->
                         Button({
@@ -223,6 +238,20 @@ fun main() {
                         style {
                             marginLeft(5.px)
                         }
+
+                        onMouseOver {
+                            document.body!!.style.cursor = "pointer"
+                        }
+                        onMouseOut {
+                            document.body!!.style.cursor = "default"
+                        }
+                        onClick {
+                            if(pageIndex < (rows / rowsPerPage) + 1){
+                                pageIndex++
+                                trimmedCellData = updateTrimmedCellData(cellData, rows, rowsPerPage, pageIndex)
+                            }
+                        }
+
                     }){ Text("next") }
                 }
 
