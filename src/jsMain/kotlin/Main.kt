@@ -1,11 +1,6 @@
 import CustomComposeUI.Companion.FooterText
 import CustomComposeUI.Companion.TableHeader
 import CustomComposeUI.Companion.TableRows
-import util.Converter.Companion.toASCII
-import util.Converter.Companion.toBinary
-import util.Converter.Companion.toDecimal
-import util.Converter.Companion.toHex
-import util.Converter.Companion.toOctal
 import androidx.compose.runtime.*
 import kotlinx.browser.document
 import kotlinx.browser.window
@@ -88,6 +83,103 @@ fun main() {
                     }
                 }) {
                     Text("kode8 - Byte Code Viewer")
+                }
+
+                Div {
+                    Fieldset({
+                        style {
+                            display(DisplayStyle.Flex)
+                            flexDirection(FlexDirection.Row)
+                            padding(1.px)
+                            paddingLeft(2.px)
+                            paddingRight(2.px)
+                        }
+                    }) {
+                        Div({
+                            style {
+                                padding(0.px)
+                                fontWeight("bold")
+                            }
+                        }) {
+                            Text("Column")
+                        }
+                        listOf(
+                            16, 32, 64
+                        ).forEach { mode ->
+                            Label {
+                                Input(
+                                    type = InputType.Radio,
+                                    attrs = {
+                                        checked(mode == columns)
+                                        onClick {
+                                            columns = mode
+                                            rows = (byteArray.size - 1) / columns + 1
+
+                                            if (selectedRow > rows || selectedColumn > columns) {
+                                                selectedRow = 0
+                                                selectedColumn = 0
+                                            }
+
+                                            cellData = updateCellData(byteArray, rows, columns, base)
+                                            trimmedCellData = updateTrimmedCellData(cellData, rows, rowsPerPage, pageIndex)
+                                        }
+                                    }
+                                )
+                                Span {
+                                    Text(mode.toString())
+                                }
+                            }
+                        }
+                    }
+
+                }
+
+
+                Div {
+                    Fieldset({
+                        style {
+                            display(DisplayStyle.Flex)
+                            flexDirection(FlexDirection.Row)
+                            padding(1.px)
+                            paddingLeft(2.px)
+                            paddingRight(2.px)
+                        }
+                    }) {
+                        Div({
+                            style {
+                                padding(0.px)
+                                fontWeight("bold")
+                            }
+                        }) {
+                            Text("Base")
+                        }
+                        listOf(
+                            Base.BINARY,
+                            Base.OCTAL,
+                            Base.DECIMAL,
+                            Base.HEXA_DECIMAL,
+                            Base.ASCII
+                        ).forEach { mode ->
+
+                            Label {
+                                Input(
+                                    type = InputType.Radio,
+                                    attrs = {
+                                        checked(base == mode)
+                                        onClick {
+                                            base = mode
+                                            rows = (byteArray.size - 1) / columns + 1
+                                            cellData = updateCellData(byteArray, rows, columns, base)
+                                            trimmedCellData = updateTrimmedCellData(cellData, rows, rowsPerPage, pageIndex)
+                                        }
+                                    }
+                                )
+                                Span {
+                                    Text(mode.label)
+                                }
+                            }
+                        }
+                    }
                 }
 
                 Input(
@@ -281,34 +373,6 @@ fun main() {
                     style {
                         display(DisplayStyle.Flex)
                         flexDirection(FlexDirection.Row)
-                        justifyContent(JustifyContent.Center)
-                        paddingBottom(5.px)
-                    }
-                }){
-                    NumberInput {
-                        defaultValue(goToPageIndex)
-                        min("1")
-                        max(((rows / rowsPerPage) + 1).toString())
-                        onChange { e->
-                            goToPageIndex = e.value as Int
-                        }
-                    }
-
-                    Button({
-                        onClick {
-                           pageIndex = goToPageIndex - 1
-                           trimmedCellData = updateTrimmedCellData(cellData, rows, rowsPerPage, pageIndex)
-                        }
-                    }) {
-                        Text("go")
-                    }
-                }
-
-
-                Div({
-                    style {
-                        display(DisplayStyle.Flex)
-                        flexDirection(FlexDirection.Row)
                         justifyContent(JustifyContent.SpaceBetween)
                     }
                 }){
@@ -330,100 +394,23 @@ fun main() {
                         }
                     }
 
-                    Div {
-                        Fieldset({
-                            style {
-                                display(DisplayStyle.Flex)
-                                flexDirection(FlexDirection.Row)
-                                padding(1.px)
-                                paddingLeft(2.px)
-                                paddingRight(2.px)
-                            }
-                        }) {
-                            Div({
-                                style {
-                                    padding(0.px)
-                                    fontWeight("bold")
-                                }
-                            }) {
-                                Text("Column")
-                            }
-                            listOf(
-                                16, 32, 64
-                            ).forEach { mode ->
-                                Label {
-                                    Input(
-                                        type = InputType.Radio,
-                                        attrs = {
-                                            checked(mode == columns)
-                                            onClick {
-                                                columns = mode
-                                                rows = (byteArray.size - 1) / columns + 1
-
-                                                if (selectedRow > rows || selectedColumn > columns) {
-                                                    selectedRow = 0
-                                                    selectedColumn = 0
-                                                }
-
-                                                cellData = updateCellData(byteArray, rows, columns, base)
-                                                trimmedCellData = updateTrimmedCellData(cellData, rows, rowsPerPage, pageIndex)
-                                            }
-                                        }
-                                    )
-                                    Span {
-                                        Text(mode.toString())
-                                    }
-                                }
+                    Div{
+                        NumberInput{
+                            defaultValue(goToPageIndex)
+                            min("1")
+                            max(((rows / rowsPerPage) + 1).toString())
+                            onChange { e->
+                                goToPageIndex = e.value as Int
                             }
                         }
 
-                    }
-
-
-                    Div {
-                        Fieldset({
-                            style {
-                                display(DisplayStyle.Flex)
-                                flexDirection(FlexDirection.Row)
-                                padding(1.px)
-                                paddingLeft(2.px)
-                                paddingRight(2.px)
+                        Button({
+                            onClick {
+                                pageIndex = goToPageIndex - 1
+                                trimmedCellData = updateTrimmedCellData(cellData, rows, rowsPerPage, pageIndex)
                             }
                         }) {
-                            Div({
-                                style {
-                                    padding(0.px)
-                                    fontWeight("bold")
-                                }
-                            }) {
-                                Text("Base")
-                            }
-                            listOf(
-                                Base.BINARY,
-                                Base.OCTAL,
-                                Base.DECIMAL,
-                                Base.HEXA_DECIMAL,
-                                Base.ASCII
-                            ).forEach { mode ->
-
-                                Label {
-                                    Input(
-                                        type = InputType.Radio,
-                                        attrs = {
-                                            checked(base == mode)
-                                            onClick {
-                                                base = mode
-                                                rows = (byteArray.size - 1) / columns + 1
-                                                cellData = updateCellData(byteArray, rows, columns, base)
-                                                trimmedCellData = updateTrimmedCellData(cellData, rows, rowsPerPage, pageIndex)
-                                            }
-                                        }
-                                    )
-                                    Span {
-                                        Text(mode.label)
-                                    }
-                                }
-                            }
+                            Text("go")
                         }
                     }
 
