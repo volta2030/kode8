@@ -13,6 +13,7 @@ import org.jetbrains.compose.web.renderComposable
 import org.khronos.webgl.ArrayBuffer
 import org.khronos.webgl.Int8Array
 import org.w3c.dom.HTMLInputElement
+import org.w3c.dom.ScrollToOptions
 import org.w3c.files.File
 import org.w3c.files.FileReader
 import org.w3c.files.get
@@ -121,7 +122,8 @@ fun main() {
                                             }
 
                                             cellData = updateCellData(byteArray, rows, columns, base)
-                                            trimmedCellData = updateTrimmedCellData(cellData, rows, rowsPerPage, pageIndex)
+                                            trimmedCellData =
+                                                updateTrimmedCellData(cellData, rows, rowsPerPage, pageIndex)
                                         }
                                     }
                                 )
@@ -170,7 +172,8 @@ fun main() {
                                             base = mode
                                             rows = (byteArray.size - 1) / columns + 1
                                             cellData = updateCellData(byteArray, rows, columns, base)
-                                            trimmedCellData = updateTrimmedCellData(cellData, rows, rowsPerPage, pageIndex)
+                                            trimmedCellData =
+                                                updateTrimmedCellData(cellData, rows, rowsPerPage, pageIndex)
                                         }
                                     }
                                 )
@@ -224,32 +227,64 @@ fun main() {
 
                 }
             }) {
-
-                Img("images/copy.png", "img",
-                    attrs = {
-                        style {
-                            maxWidth(20.px)
-                            maxHeight(20.px)
-                            padding(3.px)
-                        }
-                        onMouseOver {
-
-                            if (selectedFile != null) {
-                                document.body!!.style.cursor = "pointer"
-                            }
-                        }
-                        onMouseOut {
-                            document.body!!.style.cursor = "default"
-                        }
-                        onClick {
-                            if (selectedFile != null) {
-                                window.navigator.clipboard.writeText(refineToString(byteArray, base))
-                                document.body!!.style.cursor = "default"
-                                window.alert("Copied!")
-                            }
-                        }
+                Div({
+                    style {
+                        display(DisplayStyle.Flex)
+                        flexDirection(FlexDirection.Row)
+                        justifyContent(JustifyContent.SpaceBetween)
                     }
-                )
+                }) {
+                    Img("images/copy.png", "img",
+                        attrs = {
+                            style {
+                                maxWidth(20.px)
+                                maxHeight(20.px)
+                                padding(3.px)
+                            }
+                            onMouseOver {
+
+                                if (selectedFile != null) {
+                                    document.body!!.style.cursor = "pointer"
+                                }
+                            }
+                            onMouseOut {
+                                document.body!!.style.cursor = "default"
+                            }
+                            onClick {
+                                if (selectedFile != null) {
+                                    window.navigator.clipboard.writeText(refineToString(byteArray, base))
+                                    document.body!!.style.cursor = "default"
+                                    window.alert("Copied!")
+                                }
+                            }
+                        }
+                    )
+
+                    Img("images/anchor.png", "img",
+                        attrs = {
+                            style {
+                                maxWidth(20.px)
+                                maxHeight(20.px)
+                                padding(3.px)
+                            }
+                            onMouseOver {
+                                if (selectedFile != null) {
+                                    document.body!!.style.cursor = "pointer"
+                                }
+                            }
+                            onMouseOut {
+                                document.body!!.style.cursor = "default"
+                            }
+                            onClick {
+                                if (selectedFile != null) {
+                                    window.scrollTo(0.0, document.body!!.scrollHeight.toDouble())
+                                    document.body!!.style.cursor = "default"
+                                }
+                            }
+                        }
+                    )
+                }
+
 
                 Table({
                     id("table")
@@ -260,7 +295,7 @@ fun main() {
                 }) {
                     TableHeader(columns, selectedColumn)
                     TableRows(
-                        columns, if(rows < rowsPerPage) rows else rowsPerPage, pageIndex, trimmedCellData,
+                        columns, if (rows < rowsPerPage) rows else rowsPerPage, pageIndex, trimmedCellData,
                         selectedRow, selectedColumn,
                         { newSelectedRow, newSelectedColumn ->
                             selectedRow = newSelectedRow
@@ -269,158 +304,198 @@ fun main() {
                     )
                 }
 
-                FooterText(versionText, copyRightText, sourceCodeLink)
-
-            }
-
-            Footer({
-                style {
-                    position(Position.Fixed)
-                    bottom(0.px)
-                    left(0.px)
-                    right(0.px)
-                    backgroundColor(Color.rebeccapurple) // Add background color as needed
-                    padding(5.px)
-                    color(Color.white)
-                    fontWeight(3)
-                    display(DisplayStyle.Flex)
-                    flexDirection(FlexDirection.Column)
-                    justifyContent(JustifyContent.SpaceBetween)
-                }
-            }) {
-
-                Div({
-                    style {
-                        display(DisplayStyle.Flex)
-                        flexDirection(FlexDirection.Row)
-                        justifyContent(JustifyContent.Center)
-                        paddingBottom(5.px)
-                    }
-                }) {
-                    Div({
-                        style {
-                            marginRight(5.px)
-                        }
-
-                        onMouseOver {
-                          document.body!!.style.cursor = "pointer"
-                        }
-                        onMouseOut {
-                            document.body!!.style.cursor = "default"
-                        }
-                        onClick {
-                            if(pageIndex > 0){
-                                pageIndex--
-                                trimmedCellData = updateTrimmedCellData(cellData, rows, rowsPerPage, pageIndex)
-                            }
-                        }
-
-                    }){ Text("prev")
-                    }
-
-                    repeat((rows / rowsPerPage) + 1) { i ->
-
-                        Div({
-                            style {
-                                paddingLeft(1.px)
-                                paddingRight(1.px)
-                            }
-                        }) {
-                            Button({
-                                style {
-                                    backgroundColor(if(pageIndex == i) Color.rebeccapurple else Color.lightgray)
-                                }
-
-                                onClick {
-                                    pageIndex = i
-                                    trimmedCellData = updateTrimmedCellData(cellData, rows, rowsPerPage, pageIndex)
-                                }
-                            }) {
-                                Div({
-                                    style {
-                                        color(if(pageIndex == i) Color.white else Color.black)
-                                    }
-                                }) {
-                                    Text((i + 1).toString())
-                                }
-
-                            }
-                        }
-                    }
-
-                    Div({
-                        style {
-                            marginLeft(5.px)
-                        }
-
-                        onMouseOver {
-                            document.body!!.style.cursor = "pointer"
-                        }
-                        onMouseOut {
-                            document.body!!.style.cursor = "default"
-                        }
-                        onClick {
-                            if(pageIndex < (rows / rowsPerPage) + 1){
-                                pageIndex++
-                                trimmedCellData = updateTrimmedCellData(cellData, rows, rowsPerPage, pageIndex)
-                            }
-                        }
-
-                    }){ Text("next") }
-                }
-
                 Div({
                     style {
                         display(DisplayStyle.Flex)
                         flexDirection(FlexDirection.Row)
                         justifyContent(JustifyContent.SpaceBetween)
                     }
-                }){
-                    Div {
-                        Text(if (selectedRow < 0 && selectedColumn < 0) "" else "${(pageIndex * rowsPerPage + selectedRow) * columns + selectedColumn + 1}th byte = ")
-
-                        Label {
-                            Text("row : ")
-                            Text((pageIndex * rowsPerPage + (selectedRow + 1)).toString())
+                }) {
+                    Div({
+                        style {
+                            width(20.px)
+                            height(20.px)
                         }
-
-                        Label {
-                            Text(" ")
+                    })
+                    FooterText(versionText, copyRightText, sourceCodeLink)
+                    Img("images/bow.png", "img",
+                        attrs = {
+                            style {
+                                maxWidth(20.px)
+                                maxHeight(20.px)
+                                padding(3.px)
+                            }
+                            onMouseOver {
+                                if (selectedFile != null) {
+                                    document.body!!.style.cursor = "pointer"
+                                }
+                            }
+                            onMouseOut {
+                                document.body!!.style.cursor = "default"
+                            }
+                            onClick {
+                                if (selectedFile != null) {
+                                    window.scrollTo(0.0, document.body!!.scrollTop)
+                                    document.body!!.style.cursor = "default"
+                                }
+                            }
                         }
+                    )
+                }
 
-                        Label {
-                            Text("column : ")
-                            Text((selectedColumn + 1).toString())
+            }
+
+
+        }
+
+        Footer({
+            style {
+                position(Position.Fixed)
+                bottom(0.px)
+                left(0.px)
+                right(0.px)
+                backgroundColor(Color.rebeccapurple) // Add background color as needed
+                padding(5.px)
+                color(Color.white)
+                fontWeight(3)
+                display(DisplayStyle.Flex)
+                flexDirection(FlexDirection.Column)
+                justifyContent(JustifyContent.SpaceBetween)
+            }
+        }) {
+
+            Div({
+                style {
+                    display(DisplayStyle.Flex)
+                    flexDirection(FlexDirection.Row)
+                    justifyContent(JustifyContent.Center)
+                    paddingBottom(5.px)
+                }
+            }) {
+                Div({
+                    style {
+                        marginRight(5.px)
+                    }
+
+                    onMouseOver {
+                        document.body!!.style.cursor = "pointer"
+                    }
+                    onMouseOut {
+                        document.body!!.style.cursor = "default"
+                    }
+                    onClick {
+                        if (pageIndex > 0) {
+                            pageIndex--
+                            trimmedCellData = updateTrimmedCellData(cellData, rows, rowsPerPage, pageIndex)
                         }
                     }
 
-                    Div{
-                        NumberInput{
-                            defaultValue(goToPageIndex)
-                            min("1")
-                            max(((rows / rowsPerPage) + 1).toString())
-                            onChange { e->
-                                goToPageIndex = e.value as Int
-                            }
-                        }
+                }) {
+                    Text("prev")
+                }
 
+                repeat((rows / rowsPerPage) + 1) { i ->
+
+                    Div({
+                        style {
+                            paddingLeft(1.px)
+                            paddingRight(1.px)
+                        }
+                    }) {
                         Button({
+                            style {
+                                backgroundColor(if (pageIndex == i) Color.rebeccapurple else Color.lightgray)
+                            }
+
                             onClick {
-                                pageIndex = goToPageIndex - 1
+                                pageIndex = i
                                 trimmedCellData = updateTrimmedCellData(cellData, rows, rowsPerPage, pageIndex)
                             }
                         }) {
-                            Text("go")
-                        }
-                    }
+                            Div({
+                                style {
+                                    color(if (pageIndex == i) Color.white else Color.black)
+                                }
+                            }) {
+                                Text((i + 1).toString())
+                            }
 
-                    Div {
-                        Text("Total $size Bytes")
+                        }
                     }
                 }
 
+                Div({
+                    style {
+                        marginLeft(5.px)
+                    }
 
+                    onMouseOver {
+                        document.body!!.style.cursor = "pointer"
+                    }
+                    onMouseOut {
+                        document.body!!.style.cursor = "default"
+                    }
+                    onClick {
+                        if (pageIndex < (rows / rowsPerPage) + 1) {
+                            pageIndex++
+                            trimmedCellData = updateTrimmedCellData(cellData, rows, rowsPerPage, pageIndex)
+                        }
+                    }
+
+                }) { Text("next") }
             }
+
+            Div({
+                style {
+                    display(DisplayStyle.Flex)
+                    flexDirection(FlexDirection.Row)
+                    justifyContent(JustifyContent.SpaceBetween)
+                }
+            }) {
+                Div {
+                    Text(if (selectedRow < 0 && selectedColumn < 0) "" else "${(pageIndex * rowsPerPage + selectedRow) * columns + selectedColumn + 1}th byte = ")
+
+                    Label {
+                        Text("row : ")
+                        Text((pageIndex * rowsPerPage + (selectedRow + 1)).toString())
+                    }
+
+                    Label {
+                        Text(" ")
+                    }
+
+                    Label {
+                        Text("column : ")
+                        Text((selectedColumn + 1).toString())
+                    }
+                }
+
+                Div {
+                    NumberInput {
+                        defaultValue(goToPageIndex)
+                        min("1")
+                        max(((rows / rowsPerPage) + 1).toString())
+                        onChange { e ->
+                            goToPageIndex = e.value as Int
+                        }
+                    }
+
+                    Button({
+                        onClick {
+                            pageIndex = goToPageIndex - 1
+                            trimmedCellData = updateTrimmedCellData(cellData, rows, rowsPerPage, pageIndex)
+                        }
+                    }) {
+                        Text("go")
+                    }
+                }
+
+                Div {
+                    Text("Total $size Bytes")
+                }
+            }
+
+
         }
     }
 }
