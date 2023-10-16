@@ -21,7 +21,7 @@ import util.Data.Companion.refineToString
 import util.Data.Companion.updateCellData
 import util.Data.Companion.updateTrimmedCellData
 
-const val version = "1.9.1"
+const val version = "1.10.0"
 
 fun main() {
 
