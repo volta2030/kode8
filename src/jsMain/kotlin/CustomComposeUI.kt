@@ -8,6 +8,7 @@ import org.jetbrains.compose.web.dom.*
 import util.DataProcessor.Companion.getColumn
 import util.DataProcessor.Companion.getOrder
 import util.DataProcessor.Companion.getRow
+import util.DataProcessor.Companion.isCellFilled
 
 
 class CustomComposeUI {
@@ -98,21 +99,21 @@ class CustomComposeUI {
                             }
 
                             onClick {
-                                if (trimmedCellData[i][j] != "") {
+                                if (isCellFilled(i, j)) {
                                     setSelectedCell(i, j)
                                     document.body!!.style.cursor = "default"
                                 }
                             }
 
                             onMouseOver {
-                                document.body!!.style.cursor = "pointer"
+                                if(isCellFilled(i, j)) document.body!!.style.cursor = "pointer" else document.body!!.style.cursor = "default"
                             }
 
                             onMouseOut {
                                 document.body!!.style.cursor = "default"
                             }
 
-                            title("${getOrder(i, j)}th byte\nrow : ${getRow(i)} column : ${getColumn(j)}" )
+                                title(if(isCellFilled(i, j)) "${getOrder(i, j)}th byte\nrow : ${getRow(i)} column : ${getColumn(j)}" else "")
 
                         }) {
                             Div({

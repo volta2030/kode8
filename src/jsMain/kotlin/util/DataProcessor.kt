@@ -114,5 +114,9 @@ class DataProcessor {
         fun getColumn(column : Int) : Int{
             return column + 1
         }
+
+        fun isCellFilled(row : Int, column : Int) : Boolean{
+            return trimmedCellData[row][column] != ""
+        }
     }
 }
