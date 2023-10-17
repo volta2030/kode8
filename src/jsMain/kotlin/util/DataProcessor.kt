@@ -4,6 +4,10 @@ import Base
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import org.khronos.webgl.ArrayBuffer
+import org.khronos.webgl.Int8Array
+import org.w3c.files.File
+import org.w3c.files.FileReader
 import util.Converter.Companion.toASCII
 import util.Converter.Companion.toBinary
 import util.Converter.Companion.toDecimal
@@ -12,6 +16,8 @@ import util.Converter.Companion.toOctal
 
 class DataProcessor {
     companion object {
+
+        var selectedFile: File? = null
 
         var columns by mutableStateOf(64)
         var rows by mutableStateOf(0)
@@ -49,14 +55,14 @@ class DataProcessor {
             }
         }
 
-        fun updateCellData(byteArray: ByteArray, rows: Int, cols: Int, base: Base): Array<Array<String>> {
-            var cellData = Array(rows) { Array(cols) { "" } }
+        fun updateCellData(): Array<Array<String>> {
+            var cellData = Array(rows) { Array(columns) { "" } }
             val chunkSize = base.chunkSize
             val string = refineToString(byteArray, base)
 
             for (i in 0 until rows) {
-                for (j in 0 until cols) {
-                    val startIndex = i * cols * chunkSize + j * chunkSize
+                for (j in 0 until columns) {
+                    val startIndex = i * columns * chunkSize + j * chunkSize
                     val endIndex = startIndex + chunkSize
                     cellData[i][j] = string.substring(startIndex, endIndex)
                 }
@@ -65,7 +71,7 @@ class DataProcessor {
             return cellData
         }
 
-        fun updateTrimmedCellData(cellData: Array<Array<String>>, rows : Int, rowsPerPage: Int, pageIndex: Int): Array<Array<String>> {
+        fun updateTrimmedCellData(): Array<Array<String>> {
 
             if(rows < rowsPerPage) {
                 return cellData
@@ -76,6 +82,25 @@ class DataProcessor {
             }
 
             return cellData.sliceArray(pageIndex * rowsPerPage until (pageIndex + 1) * rowsPerPage)
+        }
+
+        fun load(){
+            val fileReader = FileReader()
+            fileReader.onload = { event ->
+                val arrayBuffer = event.target.asDynamic().result as? ArrayBuffer
+                if (arrayBuffer != null) {
+                    selectedRow = -1
+                    selectedColumn = -1
+                    byteArray = Int8Array(arrayBuffer).unsafeCast<ByteArray>()
+                    size = byteArray.size
+                    rows = (byteArray.size - 1) / columns + 1
+                    cellData = updateCellData()
+                    trimmedCellData = updateTrimmedCellData()
+                    pageIndex = 0
+                    goToPageIndex = 1
+                }
+            }
+            selectedFile?.let { fileReader.readAsArrayBuffer(it) }
         }
     }
 }

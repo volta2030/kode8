@@ -21,11 +21,13 @@ import util.DataProcessor.Companion.byteArray
 import util.DataProcessor.Companion.cellData
 import util.DataProcessor.Companion.columns
 import util.DataProcessor.Companion.goToPageIndex
+import util.DataProcessor.Companion.load
 import util.DataProcessor.Companion.pageIndex
 import util.DataProcessor.Companion.refineToString
 import util.DataProcessor.Companion.rows
 import util.DataProcessor.Companion.rowsPerPage
 import util.DataProcessor.Companion.selectedColumn
+import util.DataProcessor.Companion.selectedFile
 import util.DataProcessor.Companion.selectedRow
 import util.DataProcessor.Companion.size
 import util.DataProcessor.Companion.trimmedCellData
@@ -39,7 +41,6 @@ fun main() {
     val versionText = "Current v.${version}"
     val copyRightText = "Copyright © 2023 SnackLab(volta2030). All Rights Reserved."
     val sourceCodeLink = "https://github.com/volta2030/kode8"
-    var selectedFile: File? = null
 
     renderComposable(rootElementId = "root") {
 
@@ -111,9 +112,9 @@ fun main() {
                                                 selectedColumn = 0
                                             }
 
-                                            cellData = updateCellData(byteArray, rows, columns, base)
+                                            cellData = updateCellData()
                                             trimmedCellData =
-                                                updateTrimmedCellData(cellData, rows, rowsPerPage, pageIndex)
+                                                updateTrimmedCellData()
                                         }
                                     }
                                 )
@@ -161,9 +162,9 @@ fun main() {
                                         onClick {
                                             base = mode
                                             rows = (byteArray.size - 1) / columns + 1
-                                            cellData = updateCellData(byteArray, rows, columns, base)
+                                            cellData = updateCellData()
                                             trimmedCellData =
-                                                updateTrimmedCellData(cellData, rows, rowsPerPage, pageIndex)
+                                                updateTrimmedCellData()
                                         }
                                     }
                                 )
@@ -191,24 +192,7 @@ fun main() {
                         onDrop {
                             it.preventDefault()
                             selectedFile =  it.dataTransfer?.files?.get(0)
-
-                            val fileReader = FileReader()
-
-                            fileReader.onload = { event ->
-                                val arrayBuffer = event.target.asDynamic().result as? ArrayBuffer
-                                if (arrayBuffer != null) {
-                                    selectedRow = -1
-                                    selectedColumn = -1
-                                    byteArray = Int8Array(arrayBuffer).unsafeCast<ByteArray>()
-                                    size = byteArray.size
-                                    rows = (byteArray.size - 1) / columns + 1
-                                    cellData = updateCellData(byteArray, rows, columns, base)
-                                    trimmedCellData = updateTrimmedCellData(cellData, rows, rowsPerPage, pageIndex)
-                                    pageIndex = 0
-                                    goToPageIndex = 1
-                                }
-                            }
-                            selectedFile?.let { fileReader.readAsArrayBuffer(it) }
+                            load()
                         }
 
                         onDragOver {
@@ -226,23 +210,7 @@ fun main() {
                         onChange { e ->
                             val target = e.target as? HTMLInputElement
                             selectedFile = target?.files?.get(0)
-
-                            val fileReader = FileReader()
-                            fileReader.onload = { event ->
-                                val arrayBuffer = event.target.asDynamic().result as? ArrayBuffer
-                                if (arrayBuffer != null) {
-                                    selectedRow = -1
-                                    selectedColumn = -1
-                                    byteArray = Int8Array(arrayBuffer).unsafeCast<ByteArray>()
-                                    size = byteArray.size
-                                    rows = (byteArray.size - 1) / columns + 1
-                                    cellData = updateCellData(byteArray, rows, columns, base)
-                                    trimmedCellData = updateTrimmedCellData(cellData, rows, rowsPerPage, pageIndex)
-                                    pageIndex = 0
-                                    goToPageIndex = 1
-                                }
-                            }
-                            selectedFile?.let { fileReader.readAsArrayBuffer(it) }
+                            load()
                         }
                     }
                 )
@@ -421,7 +389,7 @@ fun main() {
                     onClick {
                         if (pageIndex > 0) {
                             pageIndex--
-                            trimmedCellData = updateTrimmedCellData(cellData, rows, rowsPerPage, pageIndex)
+                            trimmedCellData = updateTrimmedCellData()
                         }
                     }
 
@@ -444,7 +412,7 @@ fun main() {
 
                             onClick {
                                 pageIndex = i
-                                trimmedCellData = updateTrimmedCellData(cellData, rows, rowsPerPage, pageIndex)
+                                trimmedCellData = updateTrimmedCellData()
                             }
                         }) {
                             Div({
@@ -473,7 +441,7 @@ fun main() {
                     onClick {
                         if (pageIndex < (rows / rowsPerPage) + 1) {
                             pageIndex++
-                            trimmedCellData = updateTrimmedCellData(cellData, rows, rowsPerPage, pageIndex)
+                            trimmedCellData = updateTrimmedCellData()
                         }
                     }
 
@@ -518,7 +486,7 @@ fun main() {
                     Button({
                         onClick {
                             pageIndex = goToPageIndex - 1
-                            trimmedCellData = updateTrimmedCellData(cellData, rows, rowsPerPage, pageIndex)
+                            trimmedCellData = updateTrimmedCellData()
                         }
                     }) {
                         Text("go")
