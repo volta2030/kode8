@@ -2,6 +2,7 @@ import CustomBorder.Companion.borderBottom
 import CustomBorder.Companion.borderLeft
 import CustomBorder.Companion.borderRight
 import androidx.compose.runtime.Composable
+import kotlinx.browser.document
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.*
 
@@ -97,7 +98,16 @@ class CustomComposeUI {
                             onClick {
                                 if (trimmedCellData[i][j] != "") {
                                     setSelectedCell(i, j)
+                                    document.body!!.style.cursor = "default"
                                 }
+                            }
+
+                            onMouseOver {
+                                document.body!!.style.cursor = "pointer"
+                            }
+
+                            onMouseOut {
+                                document.body!!.style.cursor = "default"
                             }
 
                         }) {
