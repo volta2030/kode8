@@ -189,13 +189,47 @@ fun main() {
 
                 Div({
                     style {
-                        width(60.px)
+                        width(150.px)
                         height(30.px)
-                        border(2.px, LineStyle.Dashed, Color.white)
+                        border(1.px, LineStyle.Dashed, Color.white)
                         borderRadius(3.px)
                     }
                 }){
+                    Div({
+                        style {
+                            color(Color.lightgray)
+                        }
 
+                        onDrop {
+                            it.preventDefault()
+                            selectedFile =  it.dataTransfer?.files?.get(0)
+
+                            val fileReader = FileReader()
+
+                            fileReader.onload = { event ->
+                                val arrayBuffer = event.target.asDynamic().result as? ArrayBuffer
+                                if (arrayBuffer != null) {
+                                    selectedRow = -1
+                                    selectedColumn = -1
+                                    byteArray = Int8Array(arrayBuffer).unsafeCast<ByteArray>()
+                                    size = byteArray.size
+                                    rows = (byteArray.size - 1) / columns + 1
+                                    cellData = updateCellData(byteArray, rows, columns, base)
+                                    trimmedCellData = updateTrimmedCellData(cellData, rows, rowsPerPage, pageIndex)
+                                    pageIndex = 0
+                                    goToPageIndex = 1
+                                }
+                            }
+                            selectedFile?.let { fileReader.readAsArrayBuffer(it) }
+                        }
+
+                        onDragOver {
+                            it.preventDefault()
+                        }
+
+                    }) {
+                        Text("Drag and drop file")
+                    }
                 }
 
                 Input(
