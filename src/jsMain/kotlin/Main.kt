@@ -20,6 +20,7 @@ import util.DataProcessor.Companion.base
 import util.DataProcessor.Companion.byteArray
 import util.DataProcessor.Companion.cellData
 import util.DataProcessor.Companion.columns
+import util.DataProcessor.Companion.getOrder
 import util.DataProcessor.Companion.goToPageIndex
 import util.DataProcessor.Companion.load
 import util.DataProcessor.Companion.pageIndex
@@ -453,7 +454,7 @@ fun main() {
                 }
             }) {
                 Div {
-                    Text(if (selectedRow < 0 && selectedColumn < 0) "" else "${(pageIndex * rowsPerPage + selectedRow) * columns + selectedColumn + 1}th byte = ")
+                    Text(if (selectedRow < 0 && selectedColumn < 0) "" else "${getOrder()}th byte = ")
 
                     Label {
                         Text("row : ")

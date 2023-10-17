@@ -102,5 +102,9 @@ class DataProcessor {
             }
             selectedFile?.let { fileReader.readAsArrayBuffer(it) }
         }
+
+        fun getOrder() : Int{
+           return (pageIndex * rowsPerPage + selectedRow) * columns + selectedColumn + 1
+        }
     }
 }
