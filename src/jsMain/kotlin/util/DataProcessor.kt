@@ -106,5 +106,13 @@ class DataProcessor {
         fun getOrder() : Int{
            return (pageIndex * rowsPerPage + selectedRow) * columns + selectedColumn + 1
         }
+
+        fun getRow() : Int{
+            return pageIndex * rowsPerPage + (selectedRow + 1)
+        }
+
+        fun getColumn() : Int{
+            return selectedColumn + 1
+        }
     }
 }

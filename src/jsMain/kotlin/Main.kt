@@ -20,7 +20,9 @@ import util.DataProcessor.Companion.base
 import util.DataProcessor.Companion.byteArray
 import util.DataProcessor.Companion.cellData
 import util.DataProcessor.Companion.columns
+import util.DataProcessor.Companion.getColumn
 import util.DataProcessor.Companion.getOrder
+import util.DataProcessor.Companion.getRow
 import util.DataProcessor.Companion.goToPageIndex
 import util.DataProcessor.Companion.load
 import util.DataProcessor.Companion.pageIndex
@@ -458,7 +460,7 @@ fun main() {
 
                     Label {
                         Text("row : ")
-                        Text((pageIndex * rowsPerPage + (selectedRow + 1)).toString())
+                        Text("${getRow()}")
                     }
 
                     Label {
@@ -467,7 +469,7 @@ fun main() {
 
                     Label {
                         Text("column : ")
-                        Text((selectedColumn + 1).toString())
+                        Text("${getColumn()}")
                     }
                 }
 
