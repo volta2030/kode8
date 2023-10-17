@@ -111,10 +111,8 @@ fun main() {
                                                 selectedRow = 0
                                                 selectedColumn = 0
                                             }
-
-                                            cellData = updateCellData()
-                                            trimmedCellData =
-                                                updateTrimmedCellData()
+                                            updateCellData()
+                                            updateTrimmedCellData()
                                         }
                                     }
                                 )
@@ -162,9 +160,8 @@ fun main() {
                                         onClick {
                                             base = mode
                                             rows = (byteArray.size - 1) / columns + 1
-                                            cellData = updateCellData()
-                                            trimmedCellData =
-                                                updateTrimmedCellData()
+                                            updateCellData()
+                                            updateTrimmedCellData()
                                         }
                                     }
                                 )
@@ -389,7 +386,7 @@ fun main() {
                     onClick {
                         if (pageIndex > 0) {
                             pageIndex--
-                            trimmedCellData = updateTrimmedCellData()
+                            updateTrimmedCellData()
                         }
                     }
 
@@ -412,7 +409,7 @@ fun main() {
 
                             onClick {
                                 pageIndex = i
-                                trimmedCellData = updateTrimmedCellData()
+                                updateTrimmedCellData()
                             }
                         }) {
                             Div({
@@ -441,7 +438,7 @@ fun main() {
                     onClick {
                         if (pageIndex < (rows / rowsPerPage) + 1) {
                             pageIndex++
-                            trimmedCellData = updateTrimmedCellData()
+                            updateTrimmedCellData()
                         }
                     }
 
@@ -486,7 +483,7 @@ fun main() {
                     Button({
                         onClick {
                             pageIndex = goToPageIndex - 1
-                            trimmedCellData = updateTrimmedCellData()
+                            updateTrimmedCellData()
                         }
                     }) {
                         Text("go")

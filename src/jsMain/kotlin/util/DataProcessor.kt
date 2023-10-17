@@ -55,8 +55,8 @@ class DataProcessor {
             }
         }
 
-        fun updateCellData(): Array<Array<String>> {
-            var cellData = Array(rows) { Array(columns) { "" } }
+        fun updateCellData() {
+            cellData = Array(rows) { Array(columns) { "" } }
             val chunkSize = base.chunkSize
             val string = refineToString(byteArray, base)
 
@@ -67,21 +67,21 @@ class DataProcessor {
                     cellData[i][j] = string.substring(startIndex, endIndex)
                 }
             }
-
-            return cellData
         }
 
-        fun updateTrimmedCellData(): Array<Array<String>> {
+        fun updateTrimmedCellData() {
 
             if(rows < rowsPerPage) {
-                return cellData
+                trimmedCellData = cellData
+                return
             }
 
             if(cellData.size < (pageIndex + 1) * rowsPerPage){
-                return cellData.sliceArray(pageIndex * rowsPerPage until cellData.size)
+                trimmedCellData = cellData.sliceArray(pageIndex * rowsPerPage until cellData.size)
+                return
             }
 
-            return cellData.sliceArray(pageIndex * rowsPerPage until (pageIndex + 1) * rowsPerPage)
+            trimmedCellData =  cellData.sliceArray(pageIndex * rowsPerPage until (pageIndex + 1) * rowsPerPage)
         }
 
         fun load(){
@@ -94,8 +94,8 @@ class DataProcessor {
                     byteArray = Int8Array(arrayBuffer).unsafeCast<ByteArray>()
                     size = byteArray.size
                     rows = (byteArray.size - 1) / columns + 1
-                    cellData = updateCellData()
-                    trimmedCellData = updateTrimmedCellData()
+                    updateCellData()
+                    updateTrimmedCellData()
                     pageIndex = 0
                     goToPageIndex = 1
                 }
