@@ -1,6 +1,9 @@
 package util
 
 import Base
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import util.Converter.Companion.toASCII
 import util.Converter.Companion.toBinary
 import util.Converter.Companion.toDecimal
@@ -9,6 +12,30 @@ import util.Converter.Companion.toOctal
 
 class DataProcessor {
     companion object {
+
+        var columns by mutableStateOf(64)
+        var rows by mutableStateOf(0)
+        var size by mutableStateOf(0)
+
+        var pageIndex by mutableStateOf(0)
+        var goToPageIndex by mutableStateOf(1)
+        var rowsPerPage by mutableStateOf(100)
+
+        //radio buttons
+        var base by mutableStateOf(Base.HEXA_DECIMAL)
+
+        var cellData by mutableStateOf(
+            Array(1) { Array(columns) { "" } }
+        )
+
+        var trimmedCellData by mutableStateOf(
+            Array(1) { Array(1) { "" } }
+        )
+
+        var selectedRow by mutableStateOf(-1)
+        var selectedColumn by mutableStateOf(-1)
+
+        var byteArray by mutableStateOf(byteArrayOf())
 
         fun refineToString(byteArray: ByteArray, base: Base): String {
 

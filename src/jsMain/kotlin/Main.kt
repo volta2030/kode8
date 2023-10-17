@@ -13,11 +13,22 @@ import org.jetbrains.compose.web.renderComposable
 import org.khronos.webgl.ArrayBuffer
 import org.khronos.webgl.Int8Array
 import org.w3c.dom.HTMLInputElement
-import org.w3c.dom.ScrollToOptions
 import org.w3c.files.File
 import org.w3c.files.FileReader
 import org.w3c.files.get
+import util.DataProcessor.Companion.base
+import util.DataProcessor.Companion.byteArray
+import util.DataProcessor.Companion.cellData
+import util.DataProcessor.Companion.columns
+import util.DataProcessor.Companion.goToPageIndex
+import util.DataProcessor.Companion.pageIndex
 import util.DataProcessor.Companion.refineToString
+import util.DataProcessor.Companion.rows
+import util.DataProcessor.Companion.rowsPerPage
+import util.DataProcessor.Companion.selectedColumn
+import util.DataProcessor.Companion.selectedRow
+import util.DataProcessor.Companion.size
+import util.DataProcessor.Companion.trimmedCellData
 import util.DataProcessor.Companion.updateCellData
 import util.DataProcessor.Companion.updateTrimmedCellData
 
@@ -29,29 +40,6 @@ fun main() {
     val copyRightText = "Copyright © 2023 SnackLab(volta2030). All Rights Reserved."
     val sourceCodeLink = "https://github.com/volta2030/kode8"
     var selectedFile: File? = null
-    var columns by mutableStateOf(64)
-    var rows by mutableStateOf(0)
-    var size by mutableStateOf(0)
-
-    var pageIndex by mutableStateOf(0)
-    var goToPageIndex by mutableStateOf(1)
-    var rowsPerPage by mutableStateOf(100)
-
-    //radio buttons
-    var base by mutableStateOf(Base.HEXA_DECIMAL)
-
-    var cellData by mutableStateOf(
-        Array(1) { Array(columns) { "" } }
-    )
-
-    var trimmedCellData by mutableStateOf(
-        Array(1) { Array(1) { "" } }
-    )
-
-    var selectedRow by mutableStateOf(-1)
-    var selectedColumn by mutableStateOf(-1)
-
-    var byteArray by mutableStateOf(byteArrayOf())
 
     renderComposable(rootElementId = "root") {
 
