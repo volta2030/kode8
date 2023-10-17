@@ -13,45 +13,34 @@ import org.jetbrains.compose.web.renderComposable
 import org.khronos.webgl.ArrayBuffer
 import org.khronos.webgl.Int8Array
 import org.w3c.dom.HTMLInputElement
-import org.w3c.dom.ScrollToOptions
 import org.w3c.files.File
 import org.w3c.files.FileReader
 import org.w3c.files.get
-import util.Data.Companion.refineToString
-import util.Data.Companion.updateCellData
-import util.Data.Companion.updateTrimmedCellData
+import util.DataProcessor.Companion.base
+import util.DataProcessor.Companion.byteArray
+import util.DataProcessor.Companion.cellData
+import util.DataProcessor.Companion.columns
+import util.DataProcessor.Companion.goToPageIndex
+import util.DataProcessor.Companion.load
+import util.DataProcessor.Companion.pageIndex
+import util.DataProcessor.Companion.refineToString
+import util.DataProcessor.Companion.rows
+import util.DataProcessor.Companion.rowsPerPage
+import util.DataProcessor.Companion.selectedColumn
+import util.DataProcessor.Companion.selectedFile
+import util.DataProcessor.Companion.selectedRow
+import util.DataProcessor.Companion.size
+import util.DataProcessor.Companion.trimmedCellData
+import util.DataProcessor.Companion.updateCellData
+import util.DataProcessor.Companion.updateTrimmedCellData
 
-const val version = "1.10.0"
+const val version = "1.11.0"
 
 fun main() {
 
     val versionText = "Current v.${version}"
     val copyRightText = "Copyright © 2023 SnackLab(volta2030). All Rights Reserved."
     val sourceCodeLink = "https://github.com/volta2030/kode8"
-    var selectedFile: File? = null
-    var columns by mutableStateOf(64)
-    var rows by mutableStateOf(0)
-    var size by mutableStateOf(0)
-
-    var pageIndex by mutableStateOf(0)
-    var goToPageIndex by mutableStateOf(1)
-    var rowsPerPage by mutableStateOf(100)
-
-    //radio buttons
-    var base by mutableStateOf(Base.HEXA_DECIMAL)
-
-    var cellData by mutableStateOf(
-        Array(1) { Array(columns) { "" } }
-    )
-
-    var trimmedCellData by mutableStateOf(
-        Array(1) { Array(1) { "" } }
-    )
-
-    var selectedRow by mutableStateOf(-1)
-    var selectedColumn by mutableStateOf(-1)
-
-    var byteArray by mutableStateOf(byteArrayOf())
 
     renderComposable(rootElementId = "root") {
 
@@ -73,7 +62,9 @@ fun main() {
                     fontWeight(3)
                     backgroundColor(Color.rebeccapurple)
                     display(DisplayStyle.Flex)
+                    flexDirection(FlexDirection.Row)
                     justifyContent(JustifyContent.SpaceBetween)
+                    alignItems(AlignItems.Center)
                     textAlign("center")
                     padding(5.px)
                 }
@@ -120,10 +111,8 @@ fun main() {
                                                 selectedRow = 0
                                                 selectedColumn = 0
                                             }
-
-                                            cellData = updateCellData(byteArray, rows, columns, base)
-                                            trimmedCellData =
-                                                updateTrimmedCellData(cellData, rows, rowsPerPage, pageIndex)
+                                            updateCellData()
+                                            updateTrimmedCellData()
                                         }
                                     }
                                 )
@@ -171,9 +160,8 @@ fun main() {
                                         onClick {
                                             base = mode
                                             rows = (byteArray.size - 1) / columns + 1
-                                            cellData = updateCellData(byteArray, rows, columns, base)
-                                            trimmedCellData =
-                                                updateTrimmedCellData(cellData, rows, rowsPerPage, pageIndex)
+                                            updateCellData()
+                                            updateTrimmedCellData()
                                         }
                                     }
                                 )
@@ -185,29 +173,41 @@ fun main() {
                     }
                 }
 
+                Div({
+                    style {
+                        width(150.px)
+                        height(30.px)
+                        border(1.px, LineStyle.Dashed, Color.white)
+                        borderRadius(3.px)
+                    }
+                }){
+                    Div({
+                        style {
+                            color(Color.lightgray)
+                        }
+
+                        onDrop {
+                            it.preventDefault()
+                            selectedFile =  it.dataTransfer?.files?.get(0)
+                            load()
+                        }
+
+                        onDragOver {
+                            it.preventDefault()
+                        }
+
+                    }) {
+                        Text("Drag and drop file")
+                    }
+                }
+
                 Input(
                     type = InputType.File,
                     attrs = {
                         onChange { e ->
                             val target = e.target as? HTMLInputElement
                             selectedFile = target?.files?.get(0)
-
-                            val fileReader = FileReader()
-                            fileReader.onload = { event ->
-                                val arrayBuffer = event.target.asDynamic().result as? ArrayBuffer
-                                if (arrayBuffer != null) {
-                                    selectedRow = -1
-                                    selectedColumn = -1
-                                    byteArray = Int8Array(arrayBuffer).unsafeCast<ByteArray>()
-                                    size = byteArray.size
-                                    rows = (byteArray.size - 1) / columns + 1
-                                    cellData = updateCellData(byteArray, rows, columns, base)
-                                    trimmedCellData = updateTrimmedCellData(cellData, rows, rowsPerPage, pageIndex)
-                                    pageIndex = 0
-                                    goToPageIndex = 1
-                                }
-                            }
-                            selectedFile?.let { fileReader.readAsArrayBuffer(it) }
+                            load()
                         }
                     }
                 )
@@ -386,7 +386,7 @@ fun main() {
                     onClick {
                         if (pageIndex > 0) {
                             pageIndex--
-                            trimmedCellData = updateTrimmedCellData(cellData, rows, rowsPerPage, pageIndex)
+                            updateTrimmedCellData()
                         }
                     }
 
@@ -409,7 +409,7 @@ fun main() {
 
                             onClick {
                                 pageIndex = i
-                                trimmedCellData = updateTrimmedCellData(cellData, rows, rowsPerPage, pageIndex)
+                                updateTrimmedCellData()
                             }
                         }) {
                             Div({
@@ -438,7 +438,7 @@ fun main() {
                     onClick {
                         if (pageIndex < (rows / rowsPerPage) + 1) {
                             pageIndex++
-                            trimmedCellData = updateTrimmedCellData(cellData, rows, rowsPerPage, pageIndex)
+                            updateTrimmedCellData()
                         }
                     }
 
@@ -483,7 +483,7 @@ fun main() {
                     Button({
                         onClick {
                             pageIndex = goToPageIndex - 1
-                            trimmedCellData = updateTrimmedCellData(cellData, rows, rowsPerPage, pageIndex)
+                            updateTrimmedCellData()
                         }
                     }) {
                         Text("go")
