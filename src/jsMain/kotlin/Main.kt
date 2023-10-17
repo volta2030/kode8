@@ -17,9 +17,9 @@ import org.w3c.dom.ScrollToOptions
 import org.w3c.files.File
 import org.w3c.files.FileReader
 import org.w3c.files.get
-import util.Data.Companion.refineToString
-import util.Data.Companion.updateCellData
-import util.Data.Companion.updateTrimmedCellData
+import util.DataProcessor.Companion.refineToString
+import util.DataProcessor.Companion.updateCellData
+import util.DataProcessor.Companion.updateTrimmedCellData
 
 const val version = "1.10.0"
 

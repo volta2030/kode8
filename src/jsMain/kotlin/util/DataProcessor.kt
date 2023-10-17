@@ -7,7 +7,7 @@ import util.Converter.Companion.toDecimal
 import util.Converter.Companion.toHex
 import util.Converter.Companion.toOctal
 
-class Data {
+class DataProcessor {
     companion object {
 
         fun refineToString(byteArray: ByteArray, base: Base): String {
