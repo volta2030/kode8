@@ -183,7 +183,7 @@ fun main() {
                         border(1.px, LineStyle.Dashed, Color.white)
                         borderRadius(3.px)
                     }
-                }){
+                }) {
                     Div({
                         style {
                             color(Color.lightgray)
@@ -191,7 +191,7 @@ fun main() {
 
                         onDrop {
                             it.preventDefault()
-                            selectedFile =  it.dataTransfer?.files?.get(0)
+                            selectedFile = it.dataTransfer?.files?.get(0)
                             load()
                         }
 
@@ -456,11 +456,18 @@ fun main() {
                 }
             }) {
                 Div {
-                    Text(if (selectedRow < 0 && selectedColumn < 0) "" else "${getOrder()}th byte = ")
+                    Text(
+                        if (selectedRow < 0 && selectedColumn < 0) "" else "${
+                            getOrder(
+                                selectedRow,
+                                selectedColumn
+                            )
+                        }th byte = "
+                    )
 
                     Label {
                         Text("row : ")
-                        Text("${getRow()}")
+                        Text("${getRow(selectedRow)}")
                     }
 
                     Label {
@@ -469,7 +476,7 @@ fun main() {
 
                     Label {
                         Text("column : ")
-                        Text("${getColumn()}")
+                        Text("${getColumn(selectedColumn)}")
                     }
                 }
 
