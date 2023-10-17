@@ -73,7 +73,9 @@ fun main() {
                     fontWeight(3)
                     backgroundColor(Color.rebeccapurple)
                     display(DisplayStyle.Flex)
+                    flexDirection(FlexDirection.Row)
                     justifyContent(JustifyContent.SpaceBetween)
+                    alignItems(AlignItems.Center)
                     textAlign("center")
                     padding(5.px)
                 }
@@ -183,6 +185,17 @@ fun main() {
                             }
                         }
                     }
+                }
+
+                Div({
+                    style {
+                        width(60.px)
+                        height(30.px)
+                        border(2.px, LineStyle.Dashed, Color.white)
+                        borderRadius(3.px)
+                    }
+                }){
+
                 }
 
                 Input(
