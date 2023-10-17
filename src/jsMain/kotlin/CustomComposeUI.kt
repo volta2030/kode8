@@ -5,6 +5,9 @@ import androidx.compose.runtime.Composable
 import kotlinx.browser.document
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.*
+import util.DataProcessor.Companion.getColumn
+import util.DataProcessor.Companion.getOrder
+import util.DataProcessor.Companion.getRow
 
 
 class CustomComposeUI {
@@ -92,7 +95,6 @@ class CustomComposeUI {
                                 backgroundColor(if (isSelected) Color.rebeccapurple else Color.transparent)
                                 color(if (isSelected) Color.white else Color.black)
                                 textAlign("center")
-
                             }
 
                             onClick {
@@ -110,7 +112,14 @@ class CustomComposeUI {
                                 document.body!!.style.cursor = "default"
                             }
 
+                            title("${getOrder(i, j)}th byte\nrow : ${getRow(i)} column : ${getColumn(j)}" )
+
                         }) {
+                            Div({
+
+                            }) {
+
+                            }
                             Text(trimmedCellData[i][j])
                         }
                     }
