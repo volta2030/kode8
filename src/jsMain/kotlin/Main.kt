@@ -72,14 +72,6 @@ fun main() {
                     padding(5.px)
                 }
             }) {
-                Div({
-                    style {
-                        fontWeight("bold")
-                    }
-                }) {
-                    Text("kode8 - Byte Code Viewer")
-                }
-
                 Div {
                     Fieldset({
                         style {
