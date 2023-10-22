@@ -1,7 +1,6 @@
 import CustomComposeUI.Companion.FooterText
 import CustomComposeUI.Companion.TableHeader
 import CustomComposeUI.Companion.TableRows
-import androidx.compose.runtime.*
 import kotlinx.browser.document
 import kotlinx.browser.window
 import org.jetbrains.compose.web.attributes.InputType
@@ -10,15 +9,11 @@ import org.jetbrains.compose.web.attributes.min
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.*
 import org.jetbrains.compose.web.renderComposable
-import org.khronos.webgl.ArrayBuffer
-import org.khronos.webgl.Int8Array
 import org.w3c.dom.HTMLInputElement
-import org.w3c.files.File
-import org.w3c.files.FileReader
 import org.w3c.files.get
+import type.Base
 import util.DataProcessor.Companion.base
 import util.DataProcessor.Companion.byteArray
-import util.DataProcessor.Companion.cellData
 import util.DataProcessor.Companion.columns
 import util.DataProcessor.Companion.getColumn
 import util.DataProcessor.Companion.getOrder

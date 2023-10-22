@@ -54,12 +54,11 @@ class CustomComposeUI {
         fun TableRows(
             columns: Int,
             rowsPerPage: Int,
-            pageIndex : Int,
+            pageIndex: Int,
             trimmedCellData: Array<Array<String>>,
-            selectedRow : Int, selectedColumn : Int,
+            selectedRow: Int, selectedColumn: Int,
             setSelectedCell: (Int, Int) -> Unit,
         ) {
-
             var repeatTime = rowsPerPage
 
             if(trimmedCellData.size < rowsPerPage){
@@ -113,7 +112,7 @@ class CustomComposeUI {
                                 document.body!!.style.cursor = "default"
                             }
 
-                                title(if(isCellFilled(i, j)) "${getOrder(i, j)}th byte\nrow : ${getRow(i)} column : ${getColumn(j)}" else "")
+                            title(if(isCellFilled(i, j)) "${getOrder(i, j)}th byte\nrow : ${getRow(i)} column : ${getColumn(j)}" else "")
 
                         }) {
                             Div({

@@ -1,3 +1,5 @@
+package type
+
 enum class Base(val chunkSize : Int, val label : String) {
     BINARY(8, "Binary"),
     OCTAL(3, "Octal"),
