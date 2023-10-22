@@ -35,7 +35,7 @@ import util.DataProcessor.Companion.trimmedCellData
 import util.DataProcessor.Companion.updateCellData
 import util.DataProcessor.Companion.updateTrimmedCellData
 
-const val version = "1.11.0"
+const val version = "1.12.0"
 
 fun main() {
 
@@ -252,8 +252,6 @@ fun main() {
                             }
                         }
                     )
-
-                    Text(if(frequencyHashMap[0]==null) "" else frequencyHashMap[0].toString())
 
                     Img("images/anchor.png", "img",
                         attrs = {
