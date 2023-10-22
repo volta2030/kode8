@@ -5,6 +5,10 @@ import androidx.compose.runtime.Composable
 import kotlinx.browser.document
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.*
+import util.DataProcessor.Companion.getColumn
+import util.DataProcessor.Companion.getOrder
+import util.DataProcessor.Companion.getRow
+import util.DataProcessor.Companion.isCellFilled
 
 
 class CustomComposeUI {
@@ -50,12 +54,11 @@ class CustomComposeUI {
         fun TableRows(
             columns: Int,
             rowsPerPage: Int,
-            pageIndex : Int,
+            pageIndex: Int,
             trimmedCellData: Array<Array<String>>,
-            selectedRow : Int, selectedColumn : Int,
+            selectedRow: Int, selectedColumn: Int,
             setSelectedCell: (Int, Int) -> Unit,
         ) {
-
             var repeatTime = rowsPerPage
 
             if(trimmedCellData.size < rowsPerPage){
@@ -92,25 +95,31 @@ class CustomComposeUI {
                                 backgroundColor(if (isSelected) Color.rebeccapurple else Color.transparent)
                                 color(if (isSelected) Color.white else Color.black)
                                 textAlign("center")
-
                             }
 
                             onClick {
-                                if (trimmedCellData[i][j] != "") {
+                                if (isCellFilled(i, j)) {
                                     setSelectedCell(i, j)
                                     document.body!!.style.cursor = "default"
                                 }
                             }
 
                             onMouseOver {
-                                document.body!!.style.cursor = "pointer"
+                                if(isCellFilled(i, j)) document.body!!.style.cursor = "pointer" else document.body!!.style.cursor = "default"
                             }
 
                             onMouseOut {
                                 document.body!!.style.cursor = "default"
                             }
 
+                            title(if(isCellFilled(i, j)) "${getOrder(i, j)}th byte\nrow : ${getRow(i)} column : ${getColumn(j)}" else "")
+
                         }) {
+                            Div({
+
+                            }) {
+
+                            }
                             Text(trimmedCellData[i][j])
                         }
                     }

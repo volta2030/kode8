@@ -1,7 +1,6 @@
 import CustomComposeUI.Companion.FooterText
 import CustomComposeUI.Companion.TableHeader
 import CustomComposeUI.Companion.TableRows
-import androidx.compose.runtime.*
 import kotlinx.browser.document
 import kotlinx.browser.window
 import org.jetbrains.compose.web.attributes.InputType
@@ -10,16 +9,18 @@ import org.jetbrains.compose.web.attributes.min
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.*
 import org.jetbrains.compose.web.renderComposable
-import org.khronos.webgl.ArrayBuffer
-import org.khronos.webgl.Int8Array
 import org.w3c.dom.HTMLInputElement
-import org.w3c.files.File
-import org.w3c.files.FileReader
 import org.w3c.files.get
+import type.Analysis
+import type.Base
+import util.DataProcessor.Companion.analyze
 import util.DataProcessor.Companion.base
 import util.DataProcessor.Companion.byteArray
-import util.DataProcessor.Companion.cellData
 import util.DataProcessor.Companion.columns
+import util.DataProcessor.Companion.frequencyHashMap
+import util.DataProcessor.Companion.getColumn
+import util.DataProcessor.Companion.getOrder
+import util.DataProcessor.Companion.getRow
 import util.DataProcessor.Companion.goToPageIndex
 import util.DataProcessor.Companion.load
 import util.DataProcessor.Companion.pageIndex
@@ -34,7 +35,7 @@ import util.DataProcessor.Companion.trimmedCellData
 import util.DataProcessor.Companion.updateCellData
 import util.DataProcessor.Companion.updateTrimmedCellData
 
-const val version = "1.11.0"
+const val version = "1.12.0"
 
 fun main() {
 
@@ -69,14 +70,6 @@ fun main() {
                     padding(5.px)
                 }
             }) {
-                Div({
-                    style {
-                        fontWeight("bold")
-                    }
-                }) {
-                    Text("kode8 - Byte Code Viewer")
-                }
-
                 Div {
                     Fieldset({
                         style {
@@ -180,7 +173,7 @@ fun main() {
                         border(1.px, LineStyle.Dashed, Color.white)
                         borderRadius(3.px)
                     }
-                }){
+                }) {
                     Div({
                         style {
                             color(Color.lightgray)
@@ -188,7 +181,7 @@ fun main() {
 
                         onDrop {
                             it.preventDefault()
-                            selectedFile =  it.dataTransfer?.files?.get(0)
+                            selectedFile = it.dataTransfer?.files?.get(0)
                             load()
                         }
 
@@ -453,11 +446,18 @@ fun main() {
                 }
             }) {
                 Div {
-                    Text(if (selectedRow < 0 && selectedColumn < 0) "" else "${(pageIndex * rowsPerPage + selectedRow) * columns + selectedColumn + 1}th byte = ")
+                    Text(
+                        if (selectedRow < 0 && selectedColumn < 0) "" else "${
+                            getOrder(
+                                selectedRow,
+                                selectedColumn
+                            )
+                        }th byte = "
+                    )
 
                     Label {
                         Text("row : ")
-                        Text((pageIndex * rowsPerPage + (selectedRow + 1)).toString())
+                        Text("${getRow(selectedRow)}")
                     }
 
                     Label {
@@ -466,7 +466,7 @@ fun main() {
 
                     Label {
                         Text("column : ")
-                        Text((selectedColumn + 1).toString())
+                        Text("${getColumn(selectedColumn)}")
                     }
                 }
 
