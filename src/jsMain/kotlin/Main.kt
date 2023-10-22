@@ -11,10 +11,13 @@ import org.jetbrains.compose.web.dom.*
 import org.jetbrains.compose.web.renderComposable
 import org.w3c.dom.HTMLInputElement
 import org.w3c.files.get
+import type.Analysis
 import type.Base
+import util.DataProcessor.Companion.analyze
 import util.DataProcessor.Companion.base
 import util.DataProcessor.Companion.byteArray
 import util.DataProcessor.Companion.columns
+import util.DataProcessor.Companion.frequencyHashMap
 import util.DataProcessor.Companion.getColumn
 import util.DataProcessor.Companion.getOrder
 import util.DataProcessor.Companion.getRow
@@ -249,6 +252,8 @@ fun main() {
                             }
                         }
                     )
+
+                    Text(if(frequencyHashMap[0]==null) "" else frequencyHashMap[0].toString())
 
                     Img("images/anchor.png", "img",
                         attrs = {

@@ -1,13 +1,12 @@
 package util
 
+import androidx.compose.runtime.*
 import type.Base
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import org.khronos.webgl.ArrayBuffer
 import org.khronos.webgl.Int8Array
 import org.w3c.files.File
 import org.w3c.files.FileReader
+import type.Analysis
 import util.Converter.Companion.toASCII
 import util.Converter.Companion.toBinary
 import util.Converter.Companion.toDecimal
@@ -42,6 +41,8 @@ class DataProcessor {
         var selectedColumn by mutableStateOf(-1)
 
         var byteArray by mutableStateOf(byteArrayOf())
+
+        var frequencyHashMap by mutableStateOf(mutableListOf<Int>().apply { repeat(256) { add(0) } })
 
         fun refineToString(byteArray: ByteArray, base: Base): String {
 
@@ -94,6 +95,7 @@ class DataProcessor {
                     byteArray = Int8Array(arrayBuffer).unsafeCast<ByteArray>()
                     size = byteArray.size
                     rows = (byteArray.size - 1) / columns + 1
+                    analyze(byteArray, Analysis.FREQUENCY)
                     updateCellData()
                     updateTrimmedCellData()
                     pageIndex = 0
@@ -117,6 +119,19 @@ class DataProcessor {
 
         fun isCellFilled(row : Int, column : Int) : Boolean{
             return trimmedCellData[row][column] != ""
+        }
+
+        fun analyze(byteArray: ByteArray, analysis: Analysis) {
+            when(analysis){
+                Analysis.FREQUENCY->{
+                    byteArray.forEach {
+                        frequencyHashMap[it.toUByte().toInt()] = frequencyHashMap[it.toUByte().toInt()].plus(1)
+                    }
+                }
+                else ->{
+
+                }
+            }
         }
     }
 }
