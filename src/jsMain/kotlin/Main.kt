@@ -394,14 +394,24 @@ fun main() {
                             paddingRight(1.px)
                         }
                     }) {
-                        Button({
+                        Div({
                             style {
-                                backgroundColor(if (pageIndex == i) Color.rebeccapurple else Color.lightgray)
+                                width(15.px)
+                                paddingRight(1.px)
+                                paddingLeft(1.px)
+                            }
+
+                            onMouseOver {
+                                document.body!!.style.cursor = "pointer"
+                            }
+                            onMouseOut {
+                                document.body!!.style.cursor = "default"
                             }
 
                             onClick {
                                 pageIndex = i
                                 updateTrimmedCellData()
+                                document.body!!.style.cursor = "default"
                             }
                         }) {
                             Div({
@@ -432,6 +442,7 @@ fun main() {
                             pageIndex++
                             updateTrimmedCellData()
                         }
+                        document.body!!.style.cursor = "default"
                     }
 
                 }) { Text("next") }
