@@ -1,6 +1,6 @@
 import org.jetbrains.compose.web.css.*
 
-class CustomBorder {
+class CustomStyle {
     companion object {
         fun StyleScope.borderTop(width: CSSNumeric, lineStyle: LineStyle, color: CSSColorValue) {
             property("border-top", "$width $lineStyle $color")
@@ -16,6 +16,10 @@ class CustomBorder {
 
         fun StyleScope.borderLeft(width: CSSNumeric, lineStyle: LineStyle, color: CSSColorValue) {
             property("border-left", "$width $lineStyle $color")
+        }
+
+        fun StyleScope.borderCollapse(){
+            property("border-collapse","collapse")
         }
     }
 }
