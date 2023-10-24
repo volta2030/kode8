@@ -36,7 +36,7 @@ import util.DataProcessor.Companion.trimmedCellData
 import util.DataProcessor.Companion.updateCellData
 import util.DataProcessor.Companion.updateTrimmedCellData
 
-const val version = "1.13.0"
+const val version = "1.14.0"
 
 fun main() {
 
