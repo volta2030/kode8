@@ -95,7 +95,6 @@ class DataProcessor {
                     byteArray = Int8Array(arrayBuffer).unsafeCast<ByteArray>()
                     size = byteArray.size
                     rows = (byteArray.size - 1) / columns + 1
-                    analyze(byteArray, Analysis.FREQUENCY)
                     updateCellData()
                     updateTrimmedCellData()
                     pageIndex = 0
@@ -119,19 +118,6 @@ class DataProcessor {
 
         fun isCellFilled(row : Int, column : Int) : Boolean{
             return trimmedCellData[row][column] != ""
-        }
-
-        fun analyze(byteArray: ByteArray, analysis: Analysis) {
-            when(analysis){
-                Analysis.FREQUENCY->{
-                    byteArray.forEach {
-                        frequencyHashMap[it.toUByte().toInt()] = frequencyHashMap[it.toUByte().toInt()].plus(1)
-                    }
-                }
-                else ->{
-
-                }
-            }
         }
     }
 }
