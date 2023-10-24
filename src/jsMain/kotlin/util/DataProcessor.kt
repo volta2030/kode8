@@ -18,6 +18,8 @@ class DataProcessor {
 
         var selectedFile: File? = null
 
+        var fileName by mutableStateOf("")
+
         var columns by mutableStateOf(64)
         var rows by mutableStateOf(0)
         var size by mutableStateOf(0)
@@ -41,8 +43,6 @@ class DataProcessor {
         var selectedColumn by mutableStateOf(-1)
 
         var byteArray by mutableStateOf(byteArrayOf())
-
-        var frequencyHashMap by mutableStateOf(mutableListOf<Int>().apply { repeat(256) { add(0) } })
 
         fun refineToString(byteArray: ByteArray, base: Base): String {
 
@@ -95,13 +95,13 @@ class DataProcessor {
                     byteArray = Int8Array(arrayBuffer).unsafeCast<ByteArray>()
                     size = byteArray.size
                     rows = (byteArray.size - 1) / columns + 1
-                    analyze(byteArray, Analysis.FREQUENCY)
                     updateCellData()
                     updateTrimmedCellData()
                     pageIndex = 0
                     goToPageIndex = 1
                 }
             }
+            fileName = selectedFile!!.name
             selectedFile?.let { fileReader.readAsArrayBuffer(it) }
         }
 
@@ -119,19 +119,6 @@ class DataProcessor {
 
         fun isCellFilled(row : Int, column : Int) : Boolean{
             return trimmedCellData[row][column] != ""
-        }
-
-        fun analyze(byteArray: ByteArray, analysis: Analysis) {
-            when(analysis){
-                Analysis.FREQUENCY->{
-                    byteArray.forEach {
-                        frequencyHashMap[it.toUByte().toInt()] = frequencyHashMap[it.toUByte().toInt()].plus(1)
-                    }
-                }
-                else ->{
-
-                }
-            }
         }
     }
 }
