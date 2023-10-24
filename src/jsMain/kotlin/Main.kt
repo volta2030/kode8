@@ -230,7 +230,7 @@ fun main() {
 
                         val a = document.createElement("a") as HTMLAnchorElement
                         a.href = url
-                        a.download = "download.txt"
+                        a.download = "${fileName.split(".")[0]}.txt"
 
                         a.click()
                     }
