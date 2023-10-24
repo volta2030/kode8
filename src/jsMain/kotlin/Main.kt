@@ -12,14 +12,13 @@ import org.jetbrains.compose.web.dom.*
 import org.jetbrains.compose.web.renderComposable
 import org.w3c.dom.HTMLAnchorElement
 import org.w3c.dom.HTMLInputElement
-import org.w3c.dom.url.URL
 import org.w3c.dom.url.URL.Companion.createObjectURL
 import org.w3c.files.*
 import type.Base
-import util.DataProcessor
 import util.DataProcessor.Companion.base
 import util.DataProcessor.Companion.byteArray
 import util.DataProcessor.Companion.columns
+import util.DataProcessor.Companion.fileName
 import util.DataProcessor.Companion.getColumn
 import util.DataProcessor.Companion.getOrder
 import util.DataProcessor.Companion.getRow
@@ -170,7 +169,7 @@ fun main() {
 
                 Div({
                     style {
-                        width(150.px)
+                        width(180.px)
                         height(30.px)
                         border(1.px, LineStyle.Dashed, Color.white)
                         borderRadius(3.px)
@@ -192,17 +191,32 @@ fun main() {
                         }
 
                     }) {
-                        Text("Drag and drop file")
+                        Text("drag and drop file here")
                     }
+                }
+
+                Button({
+                    onClick {
+                        val fileInput = document.getElementById("fileInput") as HTMLInputElement
+                        fileInput.click()
+                    }
+                }) {
+                    Text("select file...")
                 }
 
                 Input(
                     type = InputType.File,
                     attrs = {
+                        id("fileInput")
+                        style {
+                            display(DisplayStyle.None)
+                        }
+
                         onChange { e ->
                             val target = e.target as? HTMLInputElement
                             selectedFile = target?.files?.get(0)
                             load()
+
                         }
                     }
                 )
@@ -271,6 +285,8 @@ fun main() {
                             }
                         }
                     )
+
+                    Text(fileName)
 
                     Img("images/anchor.png", "img",
                         attrs = {
