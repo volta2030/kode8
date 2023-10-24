@@ -10,9 +10,13 @@ import org.jetbrains.compose.web.attributes.min
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.*
 import org.jetbrains.compose.web.renderComposable
+import org.w3c.dom.HTMLAnchorElement
 import org.w3c.dom.HTMLInputElement
-import org.w3c.files.get
+import org.w3c.dom.url.URL
+import org.w3c.dom.url.URL.Companion.createObjectURL
+import org.w3c.files.*
 import type.Base
+import util.DataProcessor
 import util.DataProcessor.Companion.base
 import util.DataProcessor.Companion.byteArray
 import util.DataProcessor.Companion.columns
@@ -202,6 +206,23 @@ fun main() {
                         }
                     }
                 )
+
+                Button({
+                    onClick {
+                        val blobPropertyBag = BlobPropertyBag(type = "text/plain")
+                        val blob = Blob(arrayOf(refineToString(byteArray, base)), blobPropertyBag)
+
+                        val url = createObjectURL(blob)
+
+                        val a = document.createElement("a") as HTMLAnchorElement
+                        a.href = url
+                        a.download = "download.txt"
+
+                        a.click()
+                    }
+                }) {
+                    Text("download")
+                }
             }
 
 
