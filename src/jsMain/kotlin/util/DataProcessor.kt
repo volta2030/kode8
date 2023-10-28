@@ -7,6 +7,7 @@ import org.khronos.webgl.Int8Array
 import org.w3c.files.File
 import org.w3c.files.FileReader
 import type.Analysis
+import type.Extension
 import util.Converter.Companion.toASCII
 import util.Converter.Companion.toBinary
 import util.Converter.Companion.toDecimal
@@ -20,7 +21,6 @@ class DataProcessor {
 
         var fileName by mutableStateOf("")
 
-        var columns by mutableStateOf(64)
         var rows by mutableStateOf(0)
         var size by mutableStateOf(0)
 
@@ -29,7 +29,9 @@ class DataProcessor {
         var rowsPerPage by mutableStateOf(100)
 
         //radio buttons
+        var columns by mutableStateOf(64)
         var base by mutableStateOf(Base.HEXA_DECIMAL)
+        var extension by mutableStateOf(Extension.TXT)
 
         var cellData by mutableStateOf(
             Array(1) { Array(columns) { "" } }
