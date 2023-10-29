@@ -15,9 +15,12 @@ import org.w3c.dom.HTMLInputElement
 import org.w3c.dom.url.URL.Companion.createObjectURL
 import org.w3c.files.*
 import type.Base
+import type.Extension
 import util.DataProcessor.Companion.base
 import util.DataProcessor.Companion.byteArray
 import util.DataProcessor.Companion.columns
+import util.DataProcessor.Companion.download
+import util.DataProcessor.Companion.extension
 import util.DataProcessor.Companion.fileName
 import util.DataProcessor.Companion.getColumn
 import util.DataProcessor.Companion.getOrder
@@ -36,7 +39,7 @@ import util.DataProcessor.Companion.trimmedCellData
 import util.DataProcessor.Companion.updateCellData
 import util.DataProcessor.Companion.updateTrimmedCellData
 
-const val version = "1.14.0"
+const val version = "1.15.0"
 
 fun main() {
 
@@ -221,23 +224,50 @@ fun main() {
                     }
                 )
 
-                Button({
-                    onClick {
-                        val blobPropertyBag = BlobPropertyBag(type = "text/plain")
-                        val blob = Blob(arrayOf(refineToString(byteArray, base)), blobPropertyBag)
+                    Fieldset({
+                        style {
+                            display(DisplayStyle.Flex)
+                            flexDirection(FlexDirection.Row)
+                            padding(1.px)
+                            paddingLeft(2.px)
+                            paddingRight(2.px)
+                        }
+                    }) {
+                        listOf(
+                            Extension.TXT,
+                            Extension.CSV
+                        ).forEach { mode ->
+                            Label {
+                                Input(
+                                    type = InputType.Radio,
+                                    attrs = {
+                                        checked(mode == extension)
+                                        onClick {
+                                            extension = mode
+                                        }
+                                    }
+                                )
+                                Span {
+                                    Text(mode.label)
+                                }
+                            }
+                        }
+                        Button({
 
-                        val url = createObjectURL(blob)
+                            style {
+                                marginLeft(5.px)
+                            }
 
-                        val a = document.createElement("a") as HTMLAnchorElement
-                        a.href = url
-                        a.download = "${fileName.split(".")[0]}.txt"
-
-                        a.click()
+                            onClick {
+                                download()
+                            }
+                        }) {
+                            Text("download")
+                        }
                     }
-                }) {
-                    Text("download")
                 }
-            }
+
+
 
 
             Main({

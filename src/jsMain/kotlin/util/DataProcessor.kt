@@ -1,14 +1,20 @@
 package util
 
 import androidx.compose.runtime.*
+import kotlinx.browser.document
 import type.Base
 import org.khronos.webgl.ArrayBuffer
 import org.khronos.webgl.Int8Array
+import org.w3c.dom.HTMLAnchorElement
+import org.w3c.dom.url.URL
+import org.w3c.files.Blob
+import org.w3c.files.BlobPropertyBag
 import org.w3c.files.File
 import org.w3c.files.FileReader
-import type.Analysis
+import type.Extension
 import util.Converter.Companion.toASCII
 import util.Converter.Companion.toBinary
+import util.Converter.Companion.toCSVFormat
 import util.Converter.Companion.toDecimal
 import util.Converter.Companion.toHex
 import util.Converter.Companion.toOctal
@@ -20,7 +26,6 @@ class DataProcessor {
 
         var fileName by mutableStateOf("")
 
-        var columns by mutableStateOf(64)
         var rows by mutableStateOf(0)
         var size by mutableStateOf(0)
 
@@ -29,7 +34,9 @@ class DataProcessor {
         var rowsPerPage by mutableStateOf(100)
 
         //radio buttons
+        var columns by mutableStateOf(64)
         var base by mutableStateOf(Base.HEXA_DECIMAL)
+        var extension by mutableStateOf(Extension.TXT)
 
         var cellData by mutableStateOf(
             Array(1) { Array(columns) { "" } }
@@ -52,7 +59,6 @@ class DataProcessor {
                 Base.DECIMAL -> byteArray.toDecimal()
                 Base.HEXA_DECIMAL -> byteArray.toHex()
                 Base.ASCII -> byteArray.toASCII()
-                else -> byteArray.toHex()
             }
         }
 
@@ -103,6 +109,36 @@ class DataProcessor {
             }
             fileName = selectedFile!!.name
             selectedFile?.let { fileReader.readAsArrayBuffer(it) }
+        }
+
+        fun download(){
+
+            when (extension) {
+                Extension.TXT ->{
+                    val blobPropertyBag = BlobPropertyBag(type = "text/plain")
+                    val blob = Blob(arrayOf(refineToString(byteArray, base)), blobPropertyBag)
+
+                    val url = URL.createObjectURL(blob)
+
+                    val a = document.createElement("a") as HTMLAnchorElement
+                    a.href = url
+                    a.download = "${fileName.split(".")[0]}.txt"
+
+                    a.click()
+                }
+                Extension.CSV ->{
+                    val blobPropertyBag = BlobPropertyBag(type = "text/csv")
+                    val blob = Blob(arrayOf(refineToString(byteArray, base).toCSVFormat(columns, base)), blobPropertyBag)
+
+                    val url = URL.createObjectURL(blob)
+
+                    val a = document.createElement("a") as HTMLAnchorElement
+                    a.href = url
+                    a.download = "${fileName.split(".")[0]}.csv"
+
+                    a.click()
+                }
+            }
         }
 
         fun getOrder(row : Int, column : Int) : Int{
