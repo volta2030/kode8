@@ -98,10 +98,14 @@ class CustomComposeUI {
                             }
 
                             onClick {
-                                if (isCellFilled(i, j)) {
+
+                                if(isSelected){
+                                    setSelectedCell(-1, -1)
+                                }else if (isCellFilled(i, j)) {
                                     setSelectedCell(i, j)
-                                    document.body!!.style.cursor = "default"
                                 }
+
+                                document.body!!.style.cursor = "default"
                             }
 
                             onMouseOver {
