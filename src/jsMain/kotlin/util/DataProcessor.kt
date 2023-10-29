@@ -36,7 +36,7 @@ class DataProcessor {
         //radio buttons
         var columns by mutableStateOf(64)
         var base by mutableStateOf(Base.HEXA_DECIMAL)
-        var extension by mutableStateOf(Extension.TXT)
+        var extension by mutableStateOf(mutableListOf(Extension.TXT))
 
         var cellData by mutableStateOf(
             Array(1) { Array(columns) { "" } }
@@ -78,20 +78,20 @@ class DataProcessor {
 
         fun updateTrimmedCellData() {
 
-            if(rows < rowsPerPage) {
+            if (rows < rowsPerPage) {
                 trimmedCellData = cellData
                 return
             }
 
-            if(cellData.size < (pageIndex + 1) * rowsPerPage){
+            if (cellData.size < (pageIndex + 1) * rowsPerPage) {
                 trimmedCellData = cellData.sliceArray(pageIndex * rowsPerPage until cellData.size)
                 return
             }
 
-            trimmedCellData =  cellData.sliceArray(pageIndex * rowsPerPage until (pageIndex + 1) * rowsPerPage)
+            trimmedCellData = cellData.sliceArray(pageIndex * rowsPerPage until (pageIndex + 1) * rowsPerPage)
         }
 
-        fun load(){
+        fun load() {
             val fileReader = FileReader()
             fileReader.onload = { event ->
                 val arrayBuffer = event.target.asDynamic().result as? ArrayBuffer
@@ -111,49 +111,47 @@ class DataProcessor {
             selectedFile?.let { fileReader.readAsArrayBuffer(it) }
         }
 
-        fun download(){
+        fun download() {
 
-            when (extension) {
-                Extension.TXT ->{
-                    val blobPropertyBag = BlobPropertyBag(type = "text/plain")
-                    val blob = Blob(arrayOf(refineToString(byteArray, base)), blobPropertyBag)
+            if (extension.contains(Extension.TXT)) {
+                val blobPropertyBag = BlobPropertyBag(type = "text/plain")
+                val blob = Blob(arrayOf(refineToString(byteArray, base)), blobPropertyBag)
 
-                    val url = URL.createObjectURL(blob)
+                val url = URL.createObjectURL(blob)
 
-                    val a = document.createElement("a") as HTMLAnchorElement
-                    a.href = url
-                    a.download = "${fileName.split(".")[0]}.txt"
+                val a = document.createElement("a") as HTMLAnchorElement
+                a.href = url
+                a.download = "${fileName.split(".")[0]}.txt"
 
-                    a.click()
-                }
-                Extension.CSV ->{
-                    val blobPropertyBag = BlobPropertyBag(type = "text/csv")
-                    val blob = Blob(arrayOf(refineToString(byteArray, base).toCSVFormat(columns, base)), blobPropertyBag)
+                a.click()
+            }
+            if (extension.contains(Extension.CSV)) {
+                val blobPropertyBag = BlobPropertyBag(type = "text/csv")
+                val blob = Blob(arrayOf(refineToString(byteArray, base).toCSVFormat(columns, base)), blobPropertyBag)
 
-                    val url = URL.createObjectURL(blob)
+                val url = URL.createObjectURL(blob)
 
-                    val a = document.createElement("a") as HTMLAnchorElement
-                    a.href = url
-                    a.download = "${fileName.split(".")[0]}.csv"
+                val a = document.createElement("a") as HTMLAnchorElement
+                a.href = url
+                a.download = "${fileName.split(".")[0]}.csv"
 
-                    a.click()
-                }
+                a.click()
             }
         }
 
-        fun getOrder(row : Int, column : Int) : Int{
-           return (pageIndex * rowsPerPage + row) * columns + column + 1
+        fun getOrder(row: Int, column: Int): Int {
+            return (pageIndex * rowsPerPage + row) * columns + column + 1
         }
 
-        fun getRow(row : Int) : Int{
+        fun getRow(row: Int): Int {
             return pageIndex * rowsPerPage + (row + 1)
         }
 
-        fun getColumn(column : Int) : Int{
+        fun getColumn(column: Int): Int {
             return column + 1
         }
 
-        fun isCellFilled(row : Int, column : Int) : Boolean{
+        fun isCellFilled(row: Int, column: Int): Boolean {
             return trimmedCellData[row][column] != ""
         }
     }

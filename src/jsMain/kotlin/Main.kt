@@ -239,11 +239,19 @@ fun main() {
                         ).forEach { mode ->
                             Label {
                                 Input(
-                                    type = InputType.Radio,
+                                    type = InputType.Checkbox,
                                     attrs = {
-                                        checked(mode == extension)
+
+                                        if(mode == Extension.TXT){
+                                            defaultChecked()
+                                        }
+
                                         onClick {
-                                            extension = mode
+                                            if(extension.contains(mode)){
+                                                extension.remove(mode)
+                                            }else{
+                                                extension.add(mode)
+                                            }
                                         }
                                     }
                                 )
