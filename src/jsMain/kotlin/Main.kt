@@ -19,6 +19,7 @@ import type.Extension
 import util.DataProcessor.Companion.base
 import util.DataProcessor.Companion.byteArray
 import util.DataProcessor.Companion.columns
+import util.DataProcessor.Companion.download
 import util.DataProcessor.Companion.extension
 import util.DataProcessor.Companion.fileName
 import util.DataProcessor.Companion.getColumn
@@ -258,16 +259,7 @@ fun main() {
                             }
 
                             onClick {
-                                val blobPropertyBag = BlobPropertyBag(type = "text/plain")
-                                val blob = Blob(arrayOf(refineToString(byteArray, base)), blobPropertyBag)
-
-                                val url = createObjectURL(blob)
-
-                                val a = document.createElement("a") as HTMLAnchorElement
-                                a.href = url
-                                a.download = "${fileName.split(".")[0]}.txt"
-
-                                a.click()
+                                download()
                             }
                         }) {
                             Text("download")

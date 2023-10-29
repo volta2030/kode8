@@ -1,9 +1,14 @@
 package util
 
 import androidx.compose.runtime.*
+import kotlinx.browser.document
 import type.Base
 import org.khronos.webgl.ArrayBuffer
 import org.khronos.webgl.Int8Array
+import org.w3c.dom.HTMLAnchorElement
+import org.w3c.dom.url.URL
+import org.w3c.files.Blob
+import org.w3c.files.BlobPropertyBag
 import org.w3c.files.File
 import org.w3c.files.FileReader
 import type.Analysis
@@ -105,6 +110,19 @@ class DataProcessor {
             }
             fileName = selectedFile!!.name
             selectedFile?.let { fileReader.readAsArrayBuffer(it) }
+        }
+
+        fun download(){
+            val blobPropertyBag = BlobPropertyBag(type = "text/plain")
+            val blob = Blob(arrayOf(refineToString(byteArray, base)), blobPropertyBag)
+
+            val url = URL.createObjectURL(blob)
+
+            val a = document.createElement("a") as HTMLAnchorElement
+            a.href = url
+            a.download = "${fileName.split(".")[0]}.txt"
+
+            a.click()
         }
 
         fun getOrder(row : Int, column : Int) : Int{
