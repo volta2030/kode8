@@ -11,7 +11,6 @@ import org.w3c.files.Blob
 import org.w3c.files.BlobPropertyBag
 import org.w3c.files.File
 import org.w3c.files.FileReader
-import type.Analysis
 import type.Extension
 import util.Converter.Companion.toASCII
 import util.Converter.Companion.toBinary
@@ -60,7 +59,6 @@ class DataProcessor {
                 Base.DECIMAL -> byteArray.toDecimal()
                 Base.HEXA_DECIMAL -> byteArray.toHex()
                 Base.ASCII -> byteArray.toASCII()
-                else -> byteArray.toHex()
             }
         }
 
