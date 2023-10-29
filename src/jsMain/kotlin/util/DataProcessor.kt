@@ -15,6 +15,7 @@ import type.Analysis
 import type.Extension
 import util.Converter.Companion.toASCII
 import util.Converter.Companion.toBinary
+import util.Converter.Companion.toCSVFormat
 import util.Converter.Companion.toDecimal
 import util.Converter.Companion.toHex
 import util.Converter.Companion.toOctal
@@ -113,16 +114,33 @@ class DataProcessor {
         }
 
         fun download(){
-            val blobPropertyBag = BlobPropertyBag(type = "text/plain")
-            val blob = Blob(arrayOf(refineToString(byteArray, base)), blobPropertyBag)
 
-            val url = URL.createObjectURL(blob)
+            when (extension) {
+                Extension.TXT ->{
+                    val blobPropertyBag = BlobPropertyBag(type = "text/plain")
+                    val blob = Blob(arrayOf(refineToString(byteArray, base)), blobPropertyBag)
 
-            val a = document.createElement("a") as HTMLAnchorElement
-            a.href = url
-            a.download = "${fileName.split(".")[0]}.txt"
+                    val url = URL.createObjectURL(blob)
 
-            a.click()
+                    val a = document.createElement("a") as HTMLAnchorElement
+                    a.href = url
+                    a.download = "${fileName.split(".")[0]}.txt"
+
+                    a.click()
+                }
+                Extension.CSV ->{
+                    val blobPropertyBag = BlobPropertyBag(type = "text/csv")
+                    val blob = Blob(arrayOf(refineToString(byteArray, base).toCSVFormat(columns, base)), blobPropertyBag)
+
+                    val url = URL.createObjectURL(blob)
+
+                    val a = document.createElement("a") as HTMLAnchorElement
+                    a.href = url
+                    a.download = "${fileName.split(".")[0]}.csv"
+
+                    a.click()
+                }
+            }
         }
 
         fun getOrder(row : Int, column : Int) : Int{

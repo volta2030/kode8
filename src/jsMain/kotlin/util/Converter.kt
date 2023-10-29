@@ -1,5 +1,7 @@
 package util
 
+import type.Base
+
 class Converter {
     companion object {
 
@@ -44,6 +46,23 @@ class Converter {
             }
 
             return asciiChars.concatToString()
+        }
+
+        fun String.toCSVFormat(columns : Int, base : Base) : String{
+
+            var str = ""
+            var columnCount = 0
+
+            for (i : Int in indices step base.chunkSize){
+                if(columnCount==columns){
+                    str +="\n"
+                    columnCount = 0
+                }
+                str += this.substring(i, i + base.chunkSize) + ", "
+                columnCount++
+            }
+
+            return str
         }
     }
 }
