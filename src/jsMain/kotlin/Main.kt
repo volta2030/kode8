@@ -74,6 +74,51 @@ fun main() {
                     padding(5.px)
                 }
             }) {
+
+                Div({
+                    style {
+                        display(DisplayStyle.Flex)
+                        flexDirection(FlexDirection.Row)
+                    }
+                }) {
+                    Div({
+                        style {
+                            width(180.px)
+                            height(30.px)
+                            border(1.px, LineStyle.Dashed, Color.white)
+                            borderRadius(3.px)
+                        }
+                    }) {
+                        Div({
+                            style {
+                                color(Color.lightgray)
+                            }
+
+                            onDrop {
+                                it.preventDefault()
+                                selectedFile = it.dataTransfer?.files?.get(0)
+                                load()
+                            }
+
+                            onDragOver {
+                                it.preventDefault()
+                            }
+
+                        }) {
+                            Text("drag and drop file here")
+                        }
+                    }
+
+                    Button({
+                        onClick {
+                            val fileInput = document.getElementById("fileInput") as HTMLInputElement
+                            fileInput.click()
+                        }
+                    }) {
+                        Text("select file...")
+                    }
+                }
+
                 Div {
                     Fieldset({
                         style {
@@ -170,43 +215,6 @@ fun main() {
                     }
                 }
 
-                Div({
-                    style {
-                        width(180.px)
-                        height(30.px)
-                        border(1.px, LineStyle.Dashed, Color.white)
-                        borderRadius(3.px)
-                    }
-                }) {
-                    Div({
-                        style {
-                            color(Color.lightgray)
-                        }
-
-                        onDrop {
-                            it.preventDefault()
-                            selectedFile = it.dataTransfer?.files?.get(0)
-                            load()
-                        }
-
-                        onDragOver {
-                            it.preventDefault()
-                        }
-
-                    }) {
-                        Text("drag and drop file here")
-                    }
-                }
-
-                Button({
-                    onClick {
-                        val fileInput = document.getElementById("fileInput") as HTMLInputElement
-                        fileInput.click()
-                    }
-                }) {
-                    Text("select file...")
-                }
-
                 Input(
                     type = InputType.File,
                     attrs = {
@@ -224,56 +232,56 @@ fun main() {
                     }
                 )
 
-                    Fieldset({
-                        style {
-                            display(DisplayStyle.Flex)
-                            flexDirection(FlexDirection.Row)
-                            padding(1.px)
-                            paddingLeft(2.px)
-                            paddingRight(2.px)
-                        }
-                    }) {
-                        listOf(
-                            Extension.TXT,
-                            Extension.CSV
-                        ).forEach { mode ->
-                            Label {
-                                Input(
-                                    type = InputType.Checkbox,
-                                    attrs = {
+                Fieldset({
+                    style {
+                        display(DisplayStyle.Flex)
+                        flexDirection(FlexDirection.Row)
+                        padding(1.px)
+                        paddingLeft(2.px)
+                        paddingRight(2.px)
+                    }
+                }) {
+                    listOf(
+                        Extension.TXT,
+                        Extension.CSV
+                    ).forEach { mode ->
+                        Label {
+                            Input(
+                                type = InputType.Checkbox,
+                                attrs = {
 
-                                        if(mode == Extension.TXT){
-                                            defaultChecked()
-                                        }
+                                    if (mode == Extension.TXT) {
+                                        defaultChecked()
+                                    }
 
-                                        onClick {
-                                            if(extension.contains(mode)){
-                                                extension.remove(mode)
-                                            }else{
-                                                extension.add(mode)
-                                            }
+                                    onClick {
+                                        if (extension.contains(mode)) {
+                                            extension.remove(mode)
+                                        } else {
+                                            extension.add(mode)
                                         }
                                     }
-                                )
-                                Span {
-                                    Text(mode.label)
                                 }
+                            )
+                            Span {
+                                Text(mode.label)
                             }
-                        }
-                        Button({
-
-                            style {
-                                marginLeft(5.px)
-                            }
-
-                            onClick {
-                                download()
-                            }
-                        }) {
-                            Text("download")
                         }
                     }
+                    Button({
+
+                        style {
+                            marginLeft(5.px)
+                        }
+
+                        onClick {
+                            download()
+                        }
+                    }) {
+                        Text("download")
+                    }
                 }
+            }
 
 
 
