@@ -1,6 +1,8 @@
-import CustomStyle.Companion.borderBottom
-import CustomStyle.Companion.borderLeft
-import CustomStyle.Companion.borderRight
+package custom
+
+import custom.CustomStyle.Companion.borderBottom
+import custom.CustomStyle.Companion.borderLeft
+import custom.CustomStyle.Companion.borderRight
 import androidx.compose.runtime.Composable
 import kotlinx.browser.document
 import org.jetbrains.compose.web.css.*

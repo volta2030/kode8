@@ -1,7 +1,7 @@
-import CustomStyle.Companion.borderCollapse
-import CustomComposeUI.Companion.FooterText
-import CustomComposeUI.Companion.TableHeader
-import CustomComposeUI.Companion.TableRows
+import custom.CustomStyle.Companion.borderCollapse
+import custom.CustomComposeUI.Companion.FooterText
+import custom.CustomComposeUI.Companion.TableHeader
+import custom.CustomComposeUI.Companion.TableRows
 import kotlinx.browser.document
 import kotlinx.browser.window
 import org.jetbrains.compose.web.attributes.InputType

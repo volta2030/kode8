@@ -1,3 +1,5 @@
+package custom
+
 import org.jetbrains.compose.web.css.*
 
 class CustomStyle {
