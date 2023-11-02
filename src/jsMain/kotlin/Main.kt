@@ -12,6 +12,7 @@ import org.jetbrains.compose.web.dom.*
 import org.jetbrains.compose.web.renderComposable
 import org.w3c.dom.HTMLAnchorElement
 import org.w3c.dom.HTMLInputElement
+import org.w3c.dom.events.KeyboardEvent
 import org.w3c.dom.url.URL.Companion.createObjectURL
 import org.w3c.files.*
 import type.Base
@@ -46,6 +47,26 @@ fun main() {
     val versionText = "Current v.${version}"
     val copyRightText = "Copyright © 2023 SnackLab(volta2030). All Rights Reserved."
     val sourceCodeLink = "https://github.com/volta2030/kode8"
+
+    document.addEventListener("keydown", {
+        var keyEvent = it as KeyboardEvent
+
+        if (keyEvent.ctrlKey && keyEvent.keyCode == 37) {
+            selectedColumn -= 1
+        }
+
+        if (keyEvent.ctrlKey && keyEvent.keyCode == 38) {
+            selectedRow -= 1
+        }
+
+        if (keyEvent.ctrlKey && keyEvent.keyCode == 39) {
+            selectedColumn += 1
+        }
+
+        if (keyEvent.ctrlKey && keyEvent.keyCode == 40) {
+            selectedRow += 1
+        }
+    })
 
     renderComposable(rootElementId = "root") {
 
