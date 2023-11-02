@@ -49,22 +49,16 @@ fun main() {
     val sourceCodeLink = "https://github.com/volta2030/kode8"
 
     document.addEventListener("keydown", {
-        var keyEvent = it as KeyboardEvent
+        val keyEvent = it as KeyboardEvent
 
-        if (keyEvent.ctrlKey && keyEvent.keyCode == 37) {
-            selectedColumn -= 1
-        }
-
-        if (keyEvent.ctrlKey && keyEvent.keyCode == 38) {
-            selectedRow -= 1
-        }
-
-        if (keyEvent.ctrlKey && keyEvent.keyCode == 39) {
-            selectedColumn += 1
-        }
-
-        if (keyEvent.ctrlKey && keyEvent.keyCode == 40) {
-            selectedRow += 1
+        if (keyEvent.ctrlKey) {
+            when (keyEvent.keyCode) {
+                37 -> selectedColumn -= 1
+                38 -> selectedRow -= 1
+                39 -> selectedColumn += 1
+                40 -> selectedRow += 1
+                else -> {}
+            }
         }
     })
 
