@@ -282,6 +282,7 @@ fun main() {
                             }
                         }
                     }
+
                     Button({
 
                         style {
@@ -295,6 +296,30 @@ fun main() {
                         Text("download")
                     }
                 }
+
+                Img("images/help.png", "img",
+                    attrs = {
+                        style {
+                            maxWidth(20.px)
+                            maxHeight(20.px)
+                            padding(3.px)
+                        }
+
+                        onMouseOver {
+                            document.body!!.style.cursor = "pointer"
+                        }
+
+                        onMouseOut {
+                            document.body!!.style.cursor = "default"
+                        }
+
+                        onClick {
+                            if (selectedFile != null) {
+                                document.body!!.style.cursor = "default"
+                            }
+                        }
+                    }
+                )
             }
 
 
