@@ -17,6 +17,7 @@ import org.w3c.dom.url.URL.Companion.createObjectURL
 import org.w3c.files.*
 import type.Base
 import type.Extension
+import util.DataProcessor
 import util.DataProcessor.Companion.base
 import util.DataProcessor.Companion.byteArray
 import util.DataProcessor.Companion.columns
@@ -24,6 +25,7 @@ import util.DataProcessor.Companion.download
 import util.DataProcessor.Companion.extension
 import util.DataProcessor.Companion.fileName
 import util.DataProcessor.Companion.getColumn
+import util.DataProcessor.Companion.getMaxRowEachPage
 import util.DataProcessor.Companion.getOrder
 import util.DataProcessor.Companion.getRow
 import util.DataProcessor.Companion.goToPageIndex
@@ -53,10 +55,10 @@ fun main() {
 
         if (keyEvent.ctrlKey) {
             when (keyEvent.keyCode) {
-                37 -> selectedColumn -= 1
-                38 -> selectedRow -= 1
-                39 -> selectedColumn += 1
-                40 -> selectedRow += 1
+                37 -> if(selectedColumn in 1 until columns)  selectedColumn -= 1
+                38 -> if(selectedRow in 1 until getMaxRowEachPage()) selectedRow -= 1
+                39 -> if(selectedColumn in 0 until columns - 1) selectedColumn += 1
+                40 -> if(selectedRow in 0 until getMaxRowEachPage() - 1) selectedRow += 1
                 else -> {}
             }
         }
@@ -385,7 +387,7 @@ fun main() {
                 }) {
                     TableHeader(columns, selectedColumn)
                     TableRows(
-                        columns, if (rows < rowsPerPage) rows else rowsPerPage, pageIndex, trimmedCellData,
+                        columns, getMaxRowEachPage(), pageIndex, trimmedCellData,
                         selectedRow, selectedColumn,
                         { newSelectedRow, newSelectedColumn ->
                             selectedRow = newSelectedRow

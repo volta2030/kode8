@@ -151,6 +151,10 @@ class DataProcessor {
             return column + 1
         }
 
+        fun getMaxRowEachPage() : Int {
+            return if (rows < rowsPerPage || pageIndex == (rows / rowsPerPage)) rows % 100 else rowsPerPage
+        }
+
         fun isCellFilled(row: Int, column: Int): Boolean {
             return trimmedCellData[row][column] != ""
         }
