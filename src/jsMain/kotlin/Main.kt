@@ -27,6 +27,7 @@ import util.DataProcessor.Companion.getMaxRowEachPage
 import util.DataProcessor.Companion.getOrder
 import util.DataProcessor.Companion.getRow
 import util.DataProcessor.Companion.goToPageIndex
+import util.DataProcessor.Companion.isCellFilled
 import util.DataProcessor.Companion.load
 import util.DataProcessor.Companion.pageIndex
 import util.DataProcessor.Companion.refineToString
@@ -53,10 +54,10 @@ fun main() {
 
         if (keyEvent.ctrlKey) {
             when (keyEvent.keyCode) {
-                37 -> if(selectedColumn in 1 until columns)  selectedColumn -= 1
-                38 -> if(selectedRow in 1 until getMaxRowEachPage()) selectedRow -= 1
-                39 -> if(selectedColumn in 0 until columns - 1) selectedColumn += 1
-                40 -> if(selectedRow in 0 until getMaxRowEachPage() - 1) selectedRow += 1
+                37 -> if(isCellFilled(selectedRow, selectedColumn - 1) && selectedColumn in 1 until columns)  selectedColumn -= 1
+                38 -> if(isCellFilled(selectedRow - 1, selectedColumn) && selectedRow in 1 until getMaxRowEachPage()) selectedRow -= 1
+                39 -> if(isCellFilled(selectedRow, selectedColumn + 1) && selectedColumn in 0 until columns - 1) selectedColumn += 1
+                40 -> if(isCellFilled(selectedRow + 1, selectedColumn) && selectedRow in 0 until getMaxRowEachPage() - 1) selectedRow += 1
                 else -> {}
             }
         }
