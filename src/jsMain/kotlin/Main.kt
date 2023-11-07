@@ -1,10 +1,11 @@
-import CustomStyle.Companion.borderCollapse
-import CustomComposeUI.Companion.FooterText
-import CustomComposeUI.Companion.TableHeader
-import CustomComposeUI.Companion.TableRows
+import custom.CustomStyle.Companion.borderCollapse
+import custom.CustomComposeUI.Companion.FooterText
+import custom.CustomComposeUI.Companion.TableHeader
+import custom.CustomComposeUI.Companion.TableRows
 import kotlinx.browser.document
 import kotlinx.browser.window
 import org.jetbrains.compose.web.attributes.InputType
+import org.jetbrains.compose.web.attributes.disabled
 import org.jetbrains.compose.web.attributes.max
 import org.jetbrains.compose.web.attributes.min
 import org.jetbrains.compose.web.css.*
@@ -26,6 +27,7 @@ import util.DataProcessor.Companion.getMaxRowEachPage
 import util.DataProcessor.Companion.getOrder
 import util.DataProcessor.Companion.getRow
 import util.DataProcessor.Companion.goToPageIndex
+import util.DataProcessor.Companion.isCellFilled
 import util.DataProcessor.Companion.load
 import util.DataProcessor.Companion.pageIndex
 import util.DataProcessor.Companion.refineToString
@@ -39,7 +41,7 @@ import util.DataProcessor.Companion.trimmedCellData
 import util.DataProcessor.Companion.updateCellData
 import util.DataProcessor.Companion.updateTrimmedCellData
 
-const val version = "1.16.0"
+const val version = "1.16.1"
 
 fun main() {
 
@@ -52,10 +54,10 @@ fun main() {
 
         if (keyEvent.ctrlKey) {
             when (keyEvent.keyCode) {
-                37 -> if(selectedColumn in 1 until columns)  selectedColumn -= 1
-                38 -> if(selectedRow in 1 until getMaxRowEachPage()) selectedRow -= 1
-                39 -> if(selectedColumn in 0 until columns - 1) selectedColumn += 1
-                40 -> if(selectedRow in 0 until getMaxRowEachPage() - 1) selectedRow += 1
+                37 -> if(isCellFilled(selectedRow, selectedColumn - 1) && selectedColumn in 1 until columns)  selectedColumn -= 1
+                38 -> if(isCellFilled(selectedRow - 1, selectedColumn) && selectedRow in 1 until getMaxRowEachPage()) selectedRow -= 1
+                39 -> if(isCellFilled(selectedRow, selectedColumn + 1) && selectedColumn in 0 until columns - 1) selectedColumn += 1
+                40 -> if(isCellFilled(selectedRow + 1, selectedColumn) && selectedRow in 0 until getMaxRowEachPage() - 1) selectedRow += 1
                 else -> {}
             }
         }
@@ -282,7 +284,12 @@ fun main() {
                             }
                         }
                     }
+
                     Button({
+
+                        disabled()
+
+                        id("downloadButton")
 
                         style {
                             marginLeft(5.px)
@@ -295,6 +302,30 @@ fun main() {
                         Text("download")
                     }
                 }
+
+                Img("images/help.png", "img",
+                    attrs = {
+                        style {
+                            maxWidth(20.px)
+                            maxHeight(20.px)
+                            padding(3.px)
+                        }
+
+                        onMouseOver {
+                            document.body!!.style.cursor = "pointer"
+                        }
+
+                        onMouseOut {
+                            document.body!!.style.cursor = "default"
+                        }
+
+                        onClick {
+                            if (selectedFile != null) {
+                                document.body!!.style.cursor = "default"
+                            }
+                        }
+                    }
+                )
             }
 
 
