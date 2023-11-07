@@ -5,6 +5,7 @@ import custom.CustomComposeUI.Companion.TableRows
 import kotlinx.browser.document
 import kotlinx.browser.window
 import org.jetbrains.compose.web.attributes.InputType
+import org.jetbrains.compose.web.attributes.disabled
 import org.jetbrains.compose.web.attributes.max
 import org.jetbrains.compose.web.attributes.min
 import org.jetbrains.compose.web.css.*
@@ -284,6 +285,10 @@ fun main() {
                     }
 
                     Button({
+
+                        disabled()
+
+                        id("downloadButton")
 
                         style {
                             marginLeft(5.px)

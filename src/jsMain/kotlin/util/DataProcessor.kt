@@ -2,10 +2,12 @@ package util
 
 import androidx.compose.runtime.*
 import kotlinx.browser.document
+import org.jetbrains.compose.web.attributes.InputType
 import type.Base
 import org.khronos.webgl.ArrayBuffer
 import org.khronos.webgl.Int8Array
 import org.w3c.dom.HTMLAnchorElement
+import org.w3c.dom.HTMLButtonElement
 import org.w3c.dom.url.URL
 import org.w3c.files.Blob
 import org.w3c.files.BlobPropertyBag
@@ -105,6 +107,7 @@ class DataProcessor {
                     updateTrimmedCellData()
                     pageIndex = 0
                     goToPageIndex = 1
+                    (document.getElementById("downloadButton") as HTMLButtonElement).disabled = false
                 }
             }
             fileName = selectedFile!!.name
@@ -112,6 +115,10 @@ class DataProcessor {
         }
 
         fun download() {
+
+            if(selectedFile==null){
+                return
+            }
 
             if (extension.contains(Extension.TXT)) {
                 val blobPropertyBag = BlobPropertyBag(type = "text/plain")
