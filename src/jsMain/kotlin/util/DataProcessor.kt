@@ -40,7 +40,7 @@ class DataProcessor {
         var base by mutableStateOf(Base.HEXA_DECIMAL)
         var extension by mutableStateOf(mutableListOf(Extension.TXT))
 
-        var cellData by mutableStateOf(
+        private var cellData by mutableStateOf(
             Array(1) { Array(columns) { "" } }
         )
 

@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "com.snacklab"
-version = "1.16.1"
+version = "1.16.2"
 
 repositories {
     google()
