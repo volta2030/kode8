@@ -584,18 +584,8 @@ fun main() {
                 }
             }) {
                 Div {
-                    Text(
-                        if (selectedRow < 0 && selectedColumn < 0) "" else "${
-                            getOrder(
-                                selectedRow,
-                                selectedColumn
-                            )
-                        }th byte = "
-                    )
-
                     Label {
-                        Text("row : ")
-                        Text("${getRow(selectedRow)}")
+                        Text(if (selectedRow < 0 || selectedColumn < 0) "" else "row : ${getRow(selectedRow)}")
                     }
 
                     Label {
@@ -603,8 +593,7 @@ fun main() {
                     }
 
                     Label {
-                        Text("column : ")
-                        Text("${getColumn(selectedColumn)}")
+                        Text(if (selectedRow < 0 || selectedColumn < 0) "" else "column : ${getColumn(selectedColumn)}")
                     }
                 }
 
@@ -629,7 +618,15 @@ fun main() {
                 }
 
                 Div {
-                    Text("Total $size Bytes")
+                    Text(
+                        if (selectedRow < 0 || selectedColumn < 0) "" else "${
+                            getOrder(
+                                selectedRow,
+                                selectedColumn
+                            )
+                        }th"
+                    )
+                    Text(" / $size Bytes")
                 }
             }
 
